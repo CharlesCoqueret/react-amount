@@ -1,0 +1,53 @@
+.input-wrapper {
+  display: flex;
+  background-color: white;
+  border: 1px solid #7b7b93;
+  margin: 10px 0;
+  border-radius: 5px;
+
+  &.focus {
+    border: 1px solid orange;
+  }
+
+  &.readonly {
+    border: 0;
+    input {
+      text-align: left;
+      width: fit-content;
+      padding: 5px;
+    }
+    .prefix {
+      padding: 5px 0px;
+    }
+
+    .suffix {
+      padding: 5px 0px;
+    }
+  }
+
+  .prefix,
+  .suffix {
+    position: relative;
+    color: #7b7b93;
+    font-size: 14px;
+  }
+
+  .prefix {
+    padding: 15px 0 15px 15px;
+  }
+
+  .suffix {
+    padding: 15px 15px 15px 0;
+  }
+
+  input {
+    background-color: transparent;
+    position: relative;
+    width: 100%;
+    padding: 15px;
+    color: #36454f;
+    outline: none;
+    border: none;
+    font-size: 14px;
+  }
+}
