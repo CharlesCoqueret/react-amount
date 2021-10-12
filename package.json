@@ -40,8 +40,8 @@
     "build:scss:standard": "sass src/index.scss dist/style/index.css",
     "build:scss:minified": "sass src/index.scss dist/style/index.min.css --style compressed",
     "test": "jest --coverage",
-    "lint": "yarn xo",
-    "lint:fix": "yarn xo --fix"
+    "lint": "xo",
+    "lint:fix": "xo --fix"
   },
   "devDependencies": {
     "@babel/core": "^7.15.8",
