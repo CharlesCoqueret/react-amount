@@ -22,7 +22,7 @@ export interface AmountProps {
   readonly?: boolean;
   /** Unique identifier of the field (used as id and key)*/
   name: string;
-  /** class to be added to input field */
+  /** class to be added to the wrapper of the input field */
   className?: string;
   /** onChange handler */
   onChange?: (updatedObject: FormattedValues) => void | Promise<void>;
@@ -34,12 +34,16 @@ export interface AmountProps {
   thousandSeparator?: string;
   /** thousand style grouping (default: 'thousand') */
   thousandGrouping?: ThousangGroupingStyle;
-  /** value displayed on invalid input (default: '-') */
+  /** value displayed on invalid input in readonly (default: '-') */
   displayOnInvalid?: string;
   /** test id */
   dataTestId?: string;
   /** is field required */
   required?: boolean;
+  /** prefix */
+  prefix?: string;
+  /** suffix */
+  suffix?: string;
 }
 
 const Amount = (props: AmountProps): React.ReactElement => {
@@ -56,6 +60,8 @@ const Amount = (props: AmountProps): React.ReactElement => {
     displayOnInvalid,
     dataTestId,
     required,
+    prefix,
+    suffix,
   } = props;
 
   /**
@@ -82,11 +88,13 @@ const Amount = (props: AmountProps): React.ReactElement => {
         );
 
   /**
-   * State: formatted value
+   * States: formatted value, focus
    */
   const [formattedValue, setFormattedValue] = useState<string>(
     getFormattedValue(value)
   );
+
+  const [focus, setFocus] = useState<boolean>(false);
 
   // Initialize value at load time or whenever the value is updated
   useEffect(() => {
@@ -186,34 +194,36 @@ const Amount = (props: AmountProps): React.ReactElement => {
     }
   };
 
-  return readonly ? (
-    <input
-      type="text"
-      key={name}
-      id={name}
-      autoComplete="off"
-      value={formattedValue}
-      name={name}
-      onChange={() => {}}
-      onKeyDown={() => {}}
-      data-testid={dataTestId}
-      className={className}
-      readOnly
-    />
-  ) : (
-    <input
-      type="text"
-      key={name}
-      id={name}
-      autoComplete="off"
-      value={formattedValue}
-      name={name}
-      required={required}
-      onChange={handleOnChange}
-      onKeyDown={handleKeyDown}
-      data-testid={dataTestId}
-      className={className}
-    />
+  return (
+    <div
+      className={`input-wrapper ${focus ? 'focus' : ''} ${
+        readonly ? 'readonly' : ''
+      } ${className ? className : ''}`}
+    >
+      <div className="prefix">{prefix}</div>
+      <input
+        type="text"
+        key={name}
+        id={name}
+        autoComplete="off"
+        value={formattedValue}
+        name={name}
+        onChange={handleOnChange}
+        onKeyDown={handleKeyDown}
+        onFocus={() => {
+          setFocus(true);
+        }}
+        onBlur={() => {
+          setFocus(false);
+        }}
+        data-testid={dataTestId}
+        readOnly={readonly}
+        required={required}
+        size={readonly ? formattedValue.length - 1 : undefined}
+      />
+
+      <div className="suffix">{suffix}</div>
+    </div>
   );
 };
 
@@ -227,6 +237,8 @@ Amount.defaultProps = {
   thousandGrouping: ThousangGroupingStyle.THOUSAND,
   displayOnInvalid: '-',
   dataTestId: undefined,
+  prefix: undefined,
+  suffix: undefined,
 };
 
 export default Amount;

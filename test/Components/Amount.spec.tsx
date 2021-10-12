@@ -348,4 +348,64 @@ describe('<Amount />', () => {
     expect(inputField).toHaveValue('4,567');
     expect(onChange).toHaveBeenCalledTimes(4);
   });
+
+  test('user types when there is no onChange callback', async () => {
+    const onChange = jest.fn();
+    renderAmount({ onChange: undefined });
+
+    const inputField = screen.getByTestId('reactAmount');
+
+    userEvent.type(inputField, '1234');
+    expect(inputField).toHaveValue('1,234');
+    expect(onChange).toHaveBeenCalledTimes(0);
+  });
+
+  test('Wrapper should have focus class after click on the input', async () => {
+    const { container } = render(
+      <Amount
+        name="reactAmount"
+        dataTestId="reactAmount"
+        className={'reactAmountClass'}
+      />
+    );
+    expect(container.firstChild).toHaveClass('input-wrapper');
+    expect(container.firstChild).toHaveClass('reactAmountClass');
+    expect(container.firstChild).not.toHaveClass('focus');
+    expect(container.firstChild).not.toHaveClass('readonly');
+
+    const inputField = screen.getByTestId('reactAmount');
+
+    userEvent.click(inputField);
+    expect(container.firstChild).toHaveClass('input-wrapper');
+    expect(container.firstChild).toHaveClass('reactAmountClass');
+    expect(container.firstChild).toHaveClass('focus');
+    expect(container.firstChild).not.toHaveClass('readonly');
+
+    userEvent.click(container);
+    expect(container.firstChild).toHaveClass('input-wrapper');
+    expect(container.firstChild).toHaveClass('reactAmountClass');
+    expect(container.firstChild).not.toHaveClass('focus');
+    expect(container.firstChild).not.toHaveClass('readonly');
+  });
+
+  test('Wrapper should have readonly class', async () => {
+    const { container } = render(
+      <Amount name="reactAmount" dataTestId="reactAmount" readonly />
+    );
+    expect(container.firstChild).toHaveClass('input-wrapper');
+    expect(container.firstChild).toHaveClass('readonly');
+    expect(container.firstChild).not.toHaveClass('focus');
+
+    const inputField = screen.getByTestId('reactAmount');
+
+    userEvent.click(inputField);
+    expect(container.firstChild).toHaveClass('input-wrapper');
+    expect(container.firstChild).toHaveClass('readonly');
+    expect(container.firstChild).toHaveClass('focus');
+
+    userEvent.click(container);
+    expect(container.firstChild).toHaveClass('input-wrapper');
+    expect(container.firstChild).toHaveClass('readonly');
+    expect(container.firstChild).not.toHaveClass('focus');
+  });
 });
