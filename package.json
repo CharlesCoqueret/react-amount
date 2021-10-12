@@ -76,7 +76,7 @@
     "react-dom": "^16.8.0"
   },
   "engines": {
-    "node": ">=10"
+    "node": ">=12"
   },
   "xo": {
     "prettier": true,
