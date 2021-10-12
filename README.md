@@ -2,6 +2,7 @@
 
 [![GitHub open issues](https://img.shields.io/github/issues/CharlesCoqueret/react-amount?style=flat-square)](https://github.com/CharlesCoqueret/react-amount/issues)
 [![MIT](https://img.shields.io/npm/l/react-amount?style=flat-square)](https://github.com/CharlesCoqueret/react-amount/blob/master/LICENSE.txt)
+[![Coverage Status](https://coveralls.io/repos/github/CharlesCoqueret/react-amount/badge.svg?branch=master)](https://coveralls.io/github/CharlesCoqueret/react-amount?branch=master)
 
 ## Installation
 
