@@ -37,16 +37,16 @@ jobs:
           node-version: ${{ matrix.node }}
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: npm install
 
       - name: Run lint
-        run: yarn lint
+        run: npm lint
 
       - name: Run test and coverage
-        run: yarn test
+        run: npm test
 
       - name: Build the code
-        run: yarn build
+        run: npm build
 
       - name: Send code coverage results to Coveralls
         uses: coverallsapp/github-action@v1.1.0
