@@ -1,14 +1,17 @@
 import { useRef, useLayoutEffect } from 'react';
 
 export const useRunAfterUpdate = () => {
-  const afterPaintRef = useRef<any>(undefined);
+  const afterPaintRef = useRef<(() => void) | undefined>(undefined);
   useLayoutEffect(() => {
     if (afterPaintRef.current) {
       afterPaintRef.current();
       afterPaintRef.current = undefined;
     }
   });
-  const runAfterUpdate = (callback: () => void) =>
-    (afterPaintRef.current = callback);
+
+  const runAfterUpdate = (callback: () => void): void => {
+    afterPaintRef.current = callback;
+  };
+
   return runAfterUpdate;
 };

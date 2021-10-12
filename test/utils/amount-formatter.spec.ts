@@ -9,7 +9,7 @@ import {
   formatInputForDisplay,
   ThousangGroupingStyle,
   formatInputForInput,
-} from '../../src/utils/amountFormatter';
+} from '../../src/utils/amount-formatter';
 
 it('getDigitsOnly should only return digits', () => {
   expect(getDigitsOnly('-12frewqt34ffdasd.,[{}\'"fsae')).toEqual('1234');
@@ -61,8 +61,8 @@ it('toStandardSeparator replace the decimal separator and thousand separator', (
 
 it('validateNumber should exact match number', () => {
   expect(validateNumber(1234)).toEqual(false);
-  // Known truncation in javascript
-  expect(validateNumber(112233445566778.80099)).toEqual(false);
+  // eslint-disable-next-line @typescript-eslint/no-loss-of-precision
+  expect(validateNumber(112_233_445_566_778.800_99)).toEqual(false);
   expect(validateNumber('1234')).toEqual(false);
   expect(validateNumber('1234.56789')).toEqual(false);
   expect(validateNumber('-.')).toEqual(false);
@@ -172,10 +172,10 @@ it('Basic interpretting', () => {
   expect(interpretValue('67.000,00000', 5, ',', '.')).toEqual('67000.00000');
   expect(interpretValue('1', 0, '.', ',')).toEqual('1');
   expect(interpretValue('1.2345.6789,00000', 5, ',', '.')).toEqual(
-    '123456789.00000'
+    '123456789.00000',
   );
   expect(interpretValue('12.34.56.789,00000', 5, ',', '.')).toEqual(
-    '123456789.00000'
+    '123456789.00000',
   );
   expect(interpretValue('12.34.56.789.00000', 0, '.', ',')).toEqual('12');
   expect(interpretValue('12.34.56.789.000,00', 0, '.', ',')).toEqual('12');
@@ -205,18 +205,18 @@ it('Basic formatting for display of positive values', () => {
   expect(formatInputForDisplay(1000)).toEqual('1,000');
   expect(formatInputForDisplay(67.311, 2)).toEqual('67.31');
   expect(formatInputForDisplay(1000.551, 1)).toEqual('1,000.5');
-  expect(formatInputForDisplay(67000, 5, ',', '.')).toEqual('67.000,00000');
+  expect(formatInputForDisplay(67_000, 5, ',', '.')).toEqual('67.000,00000');
   expect(formatInputForDisplay(0.9, 0)).toEqual('0');
   expect(
-    formatInputForDisplay(123456789, 5, ',', '.', ThousangGroupingStyle.WAN)
+    formatInputForDisplay(123_456_789, 5, ',', '.', ThousangGroupingStyle.WAN),
   ).toEqual('1.2345.6789,00000');
   expect(
-    formatInputForDisplay(123456789, 5, ',', '.', ThousangGroupingStyle.LAKH)
+    formatInputForDisplay(123_456_789, 5, ',', '.', ThousangGroupingStyle.LAKH),
   ).toEqual('12.34.56.789,00000');
 
-  // Loss of precision due to js limitation
-  expect(formatInputForDisplay(11223344556677.1234, 4)).toEqual(
-    '11,223,344,556,677.1230'
+  // eslint-disable-next-line @typescript-eslint/no-loss-of-precision
+  expect(formatInputForDisplay(11_223_344_556_677.1234, 4)).toEqual(
+    '11,223,344,556,677.1230',
   );
 });
 
@@ -228,18 +228,24 @@ it('Basic formatting for display of negative values', () => {
   expect(formatInputForDisplay(-1000)).toEqual('-1,000');
   expect(formatInputForDisplay(-67.311, 2)).toEqual('-67.31');
   expect(formatInputForDisplay(-1000.551, 1)).toEqual('-1,000.5');
-  expect(formatInputForDisplay(-67000, 5, ',', '.')).toEqual('-67.000,00000');
+  expect(formatInputForDisplay(-67_000, 5, ',', '.')).toEqual('-67.000,00000');
   expect(formatInputForDisplay(-0.9, 0)).toEqual('0');
   expect(
-    formatInputForDisplay(-123456789, 5, ',', '.', ThousangGroupingStyle.WAN)
+    formatInputForDisplay(-123_456_789, 5, ',', '.', ThousangGroupingStyle.WAN),
   ).toEqual('-1.2345.6789,00000');
   expect(
-    formatInputForDisplay(-123456789, 5, ',', '.', ThousangGroupingStyle.LAKH)
+    formatInputForDisplay(
+      -123_456_789,
+      5,
+      ',',
+      '.',
+      ThousangGroupingStyle.LAKH,
+    ),
   ).toEqual('-12.34.56.789,00000');
 
-  // Loss of precision due to js limitation
-  expect(formatInputForDisplay(-11223344556677.1234, 4)).toEqual(
-    '-11,223,344,556,677.1230'
+  // eslint-disable-next-line @typescript-eslint/no-loss-of-precision
+  expect(formatInputForDisplay(-11_223_344_556_677.1234, 4)).toEqual(
+    '-11,223,344,556,677.1230',
   );
 });
 
@@ -258,7 +264,7 @@ it('String formatting for display', () => {
   expect(formatInputForDisplay('0.9', 0)).toEqual('0');
   expect(formatInputForDisplay('-0.01', 1)).toEqual('0.0');
   expect(formatInputForDisplay('11223344556677.12340', 4)).toEqual(
-    '11,223,344,556,677.1234'
+    '11,223,344,556,677.1234',
   );
 });
 
@@ -277,8 +283,8 @@ it('Errornous formatting for display', () => {
       ',',
       '.',
       ThousangGroupingStyle.THOUSAND,
-      '*'
-    )
+      '*',
+    ),
   ).toEqual('*');
 
   expect(() => {
@@ -300,18 +306,18 @@ it('Basic formatting for input of positive values', () => {
   expect(formatInputForInput(1000)).toEqual('1,000');
   expect(formatInputForInput(67.311, 2)).toEqual('67.31');
   expect(formatInputForInput(1000.551, 1)).toEqual('1,000.5');
-  expect(formatInputForInput(67000, 5, ',', '.')).toEqual('67.000');
+  expect(formatInputForInput(67_000, 5, ',', '.')).toEqual('67.000');
   expect(formatInputForInput(0.9, 0)).toEqual('0');
   expect(
-    formatInputForInput(123456789, 5, ',', '.', ThousangGroupingStyle.WAN)
+    formatInputForInput(123_456_789, 5, ',', '.', ThousangGroupingStyle.WAN),
   ).toEqual('1.2345.6789');
   expect(
-    formatInputForInput(123456789, 5, ',', '.', ThousangGroupingStyle.LAKH)
+    formatInputForInput(123_456_789, 5, ',', '.', ThousangGroupingStyle.LAKH),
   ).toEqual('12.34.56.789');
 
-  // Loss of precision due to js limitation
-  expect(formatInputForInput(11223344556677.1234, 4)).toEqual(
-    '11,223,344,556,677.123'
+  // eslint-disable-next-line @typescript-eslint/no-loss-of-precision
+  expect(formatInputForInput(11_223_344_556_677.1234, 4)).toEqual(
+    '11,223,344,556,677.123',
   );
 });
 
@@ -323,18 +329,18 @@ it('Basic formatting for input of negative values', () => {
   expect(formatInputForInput(-1000)).toEqual('-1,000');
   expect(formatInputForInput(-67.311, 2)).toEqual('-67.31');
   expect(formatInputForInput(-1000.551, 1)).toEqual('-1,000.5');
-  expect(formatInputForInput(-67000, 5, ',', '.')).toEqual('-67.000');
+  expect(formatInputForInput(-67_000, 5, ',', '.')).toEqual('-67.000');
   expect(formatInputForInput(-0.9, 0)).toEqual('-0');
   expect(
-    formatInputForInput(-123456789, 5, ',', '.', ThousangGroupingStyle.WAN)
+    formatInputForInput(-123_456_789, 5, ',', '.', ThousangGroupingStyle.WAN),
   ).toEqual('-1.2345.6789');
   expect(
-    formatInputForInput(-123456789, 5, ',', '.', ThousangGroupingStyle.LAKH)
+    formatInputForInput(-123_456_789, 5, ',', '.', ThousangGroupingStyle.LAKH),
   ).toEqual('-12.34.56.789');
 
-  // Loss of precision due to js limitation
-  expect(formatInputForInput(-11223344556677.1234, 4)).toEqual(
-    '-11,223,344,556,677.123'
+  // eslint-disable-next-line @typescript-eslint/no-loss-of-precision
+  expect(formatInputForInput(-11_223_344_556_677.1234, 4)).toEqual(
+    '-11,223,344,556,677.123',
   );
 });
 
@@ -352,7 +358,7 @@ it('String formatting for input of positive values', () => {
   expect(formatInputForInput('67000', 5, ',', '.')).toEqual('67.000');
   expect(formatInputForInput('0.9', 0)).toEqual('0');
   expect(formatInputForInput('11223344556677.12340', 4)).toEqual(
-    '11,223,344,556,677.1234'
+    '11,223,344,556,677.1234',
   );
 });
 
@@ -371,7 +377,7 @@ it('String formatting for input of negative values', () => {
   expect(formatInputForInput('-0.9', 0)).toEqual('-0');
   expect(formatInputForInput('-000001.', 2)).toEqual('-000001.');
   expect(formatInputForInput('-11223344556677.12340', 4)).toEqual(
-    '-11,223,344,556,677.1234'
+    '-11,223,344,556,677.1234',
   );
   expect(formatInputForInput('12.34.56.789.00000')).toEqual('12');
   expect(formatInputForInput('-12.34.--56.789.00000')).toEqual('-12');

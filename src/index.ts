@@ -4,4 +4,4 @@ export {
   FormattedValues,
 } from './Components/Amount';
 
-export { ThousangGroupingStyle } from './utils/amountFormatter';
+export { ThousangGroupingStyle } from './utils/amount-formatter';
