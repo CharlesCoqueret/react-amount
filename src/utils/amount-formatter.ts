@@ -1,5 +1,5 @@
 export const getDigitsOnly = (value: string) => {
-  return value.replace(/[^\d]/g, '');
+  return value.replace(/\D/g, '');
 };
 
 /**
@@ -12,15 +12,15 @@ export const getDigitsOnly = (value: string) => {
  */
 export const truncateValue = (
   value: string,
-  decimals: number | undefined
+  decimals: number | undefined,
 ): string => {
-  // if value is undefined or decimals or decimalSeparator are not defined, do not do anything
+  // If value is undefined or decimals or decimalSeparator are not defined, do not do anything
   if (decimals === undefined) {
     return value;
   }
 
   // Making sure precision is finite and positive
-  const precision = !isFinite(Number(decimals)) ? 0 : Math.abs(decimals);
+  const precision = Number.isFinite(Number(decimals)) ? Math.abs(decimals) : 0;
 
   // Look for the first decimal separator
   const index = value.indexOf('.');
@@ -54,8 +54,9 @@ export const manageSign = (value: string): [string, string] => {
   const sign =
     countMinus === undefined || (countMinus && countMinus % 2 === 0) ? '' : '-';
 
-  return [sign, value.replace(/\-|\+/g, '')];
+  return [sign, value.replace(/[+-]/g, '')];
 };
+
 /**
  *
  * @param value
@@ -66,7 +67,7 @@ export const manageSign = (value: string): [string, string] => {
 export const toStandardSeparator = (
   value: string,
   decimalSeparator: string,
-  thousandSeparator: string
+  thousandSeparator: string,
 ): string => {
   thousandSeparator = thousandSeparator.replace('.', '\\.');
   decimalSeparator = decimalSeparator.replace('.', '\\.');
@@ -81,25 +82,25 @@ export const toStandardSeparator = (
  * @returns
  */
 export const validateNumber = (
-  number: number | string | undefined
+  number: number | string | undefined,
 ): boolean => {
   if (number === undefined) {
     return true;
   }
 
   if (typeof number === 'number') {
-    if (!Number.isFinite(number)) {
-      return true;
-    }
-    return false;
+    return !Number.isFinite(number);
   }
 
   const result = String(number).match(/-?\d*\.\d*|-?\d+/g);
   if (!result || result.length === 0) {
     return true;
-  } else if (result.length > 1) {
+  }
+
+  if (result.length > 1) {
     return true;
   }
+
   return result[0] !== number;
 };
 
@@ -119,7 +120,7 @@ export const commonValidation = (
   value: string | number | undefined,
   decimals: number = defaultDecimals,
   decimalSeparator: string = defaultDecimalSeparator,
-  thousandSeparator: string = defaultThousandSeparator
+  thousandSeparator: string = defaultThousandSeparator,
 ): {
   sign: string;
   integer: string;
@@ -127,11 +128,11 @@ export const commonValidation = (
   approximation: boolean;
 } => {
   if (decimalSeparator.trim() === thousandSeparator.trim()) {
-    throw Error('thousandSeparator and decimalSeparator must be different');
+    throw new Error('thousandSeparator and decimalSeparator must be different');
   }
 
   if (decimalSeparator.trim() === '') {
-    throw Error('decimalSeparator must be a non blank character');
+    throw new Error('decimalSeparator must be a non blank character');
   }
 
   if (typeof value === 'string') {
@@ -142,7 +143,7 @@ export const commonValidation = (
 
   const [sign, number] = manageSign(String(value));
 
-  const precision = !isFinite(Number(decimals)) ? 0 : Math.abs(decimals);
+  const precision = Number.isFinite(Number(decimals)) ? Math.abs(decimals) : 0;
 
   const truncatedValue = truncateValue(number, precision);
 
@@ -155,16 +156,16 @@ export const interpretValue = (
   value: string | number | undefined,
   decimals: number = defaultDecimals,
   decimalSeparator: string = defaultDecimalSeparator,
-  thousandSeparator: string = defaultThousandSeparator
+  thousandSeparator: string = defaultThousandSeparator,
 ): string => {
   const { sign, integer, decimal } = commonValidation(
     value,
     decimals,
     decimalSeparator,
-    thousandSeparator
+    thousandSeparator,
   );
 
-  return sign + integer + (decimal !== undefined ? '.' + decimal : '');
+  return sign + integer + (decimal === undefined ? '' : '.' + decimal);
 };
 
 export const formatInputForDisplay = (
@@ -173,18 +174,18 @@ export const formatInputForDisplay = (
   decimalSeparator: string = defaultDecimalSeparator,
   thousandSeparator: string = defaultThousandSeparator,
   thousandGrouping: ThousangGroupingStyle = defaultThousandGrouping,
-  displayOnInvalid: string = defaultDisplayOnInvalid
+  displayOnInvalid: string = defaultDisplayOnInvalid,
 ): string => {
   const { sign, integer, decimal, approximation } = commonValidation(
     value,
     decimals,
     decimalSeparator,
-    thousandSeparator
+    thousandSeparator,
   );
 
   if (approximation) return displayOnInvalid;
 
-  const precision = !isFinite(Number(decimals)) ? 0 : Math.abs(decimals);
+  const precision = Number.isFinite(Number(decimals)) ? Math.abs(decimals) : 0;
 
   // Apply thousand grouping formatting
   let formattedInteger =
@@ -193,7 +194,7 @@ export const formatInputForDisplay = (
       // Trim all 0 on the left
       ltrim(integer),
       thousandSeparator,
-      thousandGrouping
+      thousandGrouping,
     );
 
   // Trim all 0 on the right
@@ -223,21 +224,21 @@ export const formatInputForInput = (
   decimals: number = defaultDecimals,
   decimalSeparator: string = defaultDecimalSeparator,
   thousandSeparator: string = defaultThousandSeparator,
-  thousandGrouping: ThousangGroupingStyle = defaultThousandGrouping
+  thousandGrouping: ThousangGroupingStyle = defaultThousandGrouping,
 ): string => {
   const { sign, integer, decimal } = commonValidation(
     value,
     decimals,
     decimalSeparator,
-    thousandSeparator
+    thousandSeparator,
   );
 
   // Apply thousand grouping formatting
-  let formattedInteger =
+  const formattedInteger =
     sign + applyThousandSeparator(integer, thousandSeparator, thousandGrouping);
 
   return (
-    formattedInteger + (decimal !== undefined ? decimalSeparator + decimal : '')
+    formattedInteger + (decimal === undefined ? '' : decimalSeparator + decimal)
   );
 };
 
@@ -254,6 +255,7 @@ const getThousandsGroupRegex = (thousandsGroupStyle: ThousangGroupingStyle) => {
     case ThousangGroupingStyle.WAN:
       return /(\d)(?=(\d{4})+(?!\d))/g;
     case ThousangGroupingStyle.THOUSAND:
+    default:
       return /(\d)(?=(\d{3})+(?!\d))/g;
   }
 };
@@ -269,21 +271,21 @@ const ltrim = (inputString: string): string => {
 };
 
 const rtrim = (inputString: string | undefined): string => {
-  return inputString?.replace(new RegExp('[0]+$', 'g'), '') || '';
+  return inputString?.replace(/0+$/g, '') ?? '';
 };
 
 const applyThousandSeparator = (
-  str: string,
+  input: string,
   thousandSeparator: string,
-  thousandsGroupStyle: ThousangGroupingStyle
+  thousandsGroupStyle: ThousangGroupingStyle,
 ) => {
   const thousandsGroupRegex = getThousandsGroupRegex(thousandsGroupStyle);
-  let index = str.search(/[1-9]/);
-  index = index === -1 ? str.length : index;
+  let index = input.search(/[1-9]/);
+  index = index === -1 ? input.length : index;
   return (
-    str.substring(0, index) +
-    str
-      .substring(index, str.length)
+    input.slice(0, Math.max(0, index)) +
+    input
+      .slice(index, input.length)
       .replace(thousandsGroupRegex, '$1' + thousandSeparator)
   );
 };

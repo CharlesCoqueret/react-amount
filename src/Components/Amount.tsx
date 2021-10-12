@@ -1,13 +1,13 @@
 import React, { useState, KeyboardEvent, useEffect } from 'react';
 
-import { useRunAfterUpdate } from '../hooks/useRunAfterUpdate';
+import { useRunAfterUpdate } from '../hooks/use-run-after-update';
 
 import {
   formatInputForDisplay,
   formatInputForInput,
   interpretValue,
   ThousangGroupingStyle,
-} from '../utils/amountFormatter';
+} from '../utils/amount-formatter';
 
 export interface FormattedValues {
   formatted: string;
@@ -20,29 +20,29 @@ export interface AmountProps {
   value?: string | number | undefined;
   /** Field is read only (default: false) */
   readonly?: boolean;
-  /** Unique identifier of the field (used as id and key)*/
+  /** Unique identifier of the field (used as id and key) */
   name: string;
-  /** class to be added to the wrapper of the input field */
+  /** Class to be added to the wrapper of the input field */
   className?: string;
-  /** onChange handler */
-  onChange?: (updatedObject: FormattedValues) => void | Promise<void>;
-  /** number of decimals (default: 2) */
+  /** OnChange handler */
+  onChange?: (updatedObject: FormattedValues) => void;
+  /** Number of decimals (default: 2) */
   decimals?: number;
-  /** decimal separator (default: '.') */
+  /** Decimal separator (default: '.') */
   decimalSeparator?: string;
-  /** thousand separator (default: ',') */
+  /** Thousand separator (default: ',') */
   thousandSeparator?: string;
-  /** thousand style grouping (default: 'thousand') */
+  /** Thousand style grouping (default: 'thousand') */
   thousandGrouping?: ThousangGroupingStyle;
-  /** value displayed on invalid input in readonly (default: '-') */
+  /** Value displayed on invalid input in readonly (default: '-') */
   displayOnInvalid?: string;
-  /** test id */
+  /** Test id */
   dataTestId?: string;
-  /** is field required */
+  /** Is field required */
   required?: boolean;
-  /** prefix */
+  /** Prefix */
   prefix?: string;
-  /** suffix */
+  /** Suffix */
   suffix?: string;
 }
 
@@ -77,21 +77,21 @@ const Amount = (props: AmountProps): React.ReactElement => {
           decimalSeparator,
           thousandSeparator,
           thousandGrouping,
-          displayOnInvalid
+          displayOnInvalid,
         )
       : formatInputForInput(
           value,
           decimals,
           decimalSeparator,
           thousandSeparator,
-          thousandGrouping
+          thousandGrouping,
         );
 
   /**
    * States: formatted value, focus
    */
   const [formattedValue, setFormattedValue] = useState<string>(
-    getFormattedValue(value)
+    getFormattedValue(value),
   );
 
   const [focus, setFocus] = useState<boolean>(false);
@@ -109,34 +109,32 @@ const Amount = (props: AmountProps): React.ReactElement => {
   const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     const input = event.currentTarget;
     const cursor = input.selectionStart;
-    const value = event.currentTarget.value;
+    const { value } = event.currentTarget;
 
     const newFormattedValue = getFormattedValue(value);
     const newUnformattedValue = getUnformattedValue(value);
 
     if (cursor !== null && decimalSeparator) {
-      // check the position of the decimal separator one step before in case of deletion
+      // Check the position of the decimal separator one step before in case of deletion
       const deletion = newFormattedValue.length < formattedValue.length ? 1 : 0;
 
-      // Update the position of cursor before decimal separator
+      // Update the position of the cursor after decimal separator
       if (
-        !newFormattedValue
-          .slice(0, cursor - deletion)
-          .includes(decimalSeparator)
+        newFormattedValue.slice(0, cursor - deletion).includes(decimalSeparator)
       ) {
+        runAfterUpdate(() => {
+          input.setSelectionRange(cursor, cursor);
+        });
+      }
+
+      // Update the position of cursor before decimal separator
+      else {
         const newCursor = newFormattedValue.length - value.length + cursor;
         runAfterUpdate(() => {
           input.setSelectionRange(
             Math.max(0, newCursor),
-            Math.max(0, newCursor)
+            Math.max(0, newCursor),
           );
-        });
-      }
-
-      // Update the position of the cursor after decimal separator
-      else {
-        runAfterUpdate(() => {
-          input.setSelectionRange(cursor, cursor);
         });
       }
     }
@@ -164,7 +162,7 @@ const Amount = (props: AmountProps): React.ReactElement => {
     const input = event.currentTarget;
     const cursorStart = input.selectionStart;
     const cursorEnd = input.selectionEnd;
-    const value = event.currentTarget.value;
+    const { value } = event.currentTarget;
 
     // In case of selection, we do not do anything
     if (cursorStart === null || cursorStart !== cursorEnd) {
@@ -183,14 +181,13 @@ const Amount = (props: AmountProps): React.ReactElement => {
     }
 
     // Handle delete
-    else if ('key' in event && event.key === 'Delete') {
-      // If delete on thousandSeparator, deletion of the digit after it
-      if (
-        cursorStart + 1 <= value.length &&
-        value[cursorStart] === thousandSeparator
-      ) {
-        input.setSelectionRange(cursorStart + 1, cursorStart + 1);
-      }
+    else if (
+      'key' in event &&
+      event.key === 'Delete' && // If delete on thousandSeparator, deletion of the digit after it
+      cursorStart + 1 <= value.length &&
+      value[cursorStart] === thousandSeparator
+    ) {
+      input.setSelectionRange(cursorStart + 1, cursorStart + 1);
     }
   };
 
@@ -198,16 +195,19 @@ const Amount = (props: AmountProps): React.ReactElement => {
     <div
       className={`input-wrapper ${focus ? 'focus' : ''} ${
         readonly ? 'readonly' : ''
-      } ${className ? className : ''}`}
-    >
+      } ${className ? className : ''}`}>
       <div className="prefix">{prefix}</div>
       <input
-        type="text"
         key={name}
+        type="text"
         id={name}
         autoComplete="off"
         value={formattedValue}
         name={name}
+        data-testid={dataTestId}
+        readOnly={readonly}
+        required={required}
+        size={readonly ? formattedValue.length - 1 : undefined}
         onChange={handleOnChange}
         onKeyDown={handleKeyDown}
         onFocus={() => {
@@ -216,10 +216,6 @@ const Amount = (props: AmountProps): React.ReactElement => {
         onBlur={() => {
           setFocus(false);
         }}
-        data-testid={dataTestId}
-        readOnly={readonly}
-        required={required}
-        size={readonly ? formattedValue.length - 1 : undefined}
       />
 
       <div className="suffix">{suffix}</div>

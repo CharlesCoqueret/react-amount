@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { render, screen } from '@testing-library/react';
 
 import Amount, { AmountProps } from '../../src/Components/Amount';
-import { ThousangGroupingStyle } from '../../src/utils/amountFormatter';
+import { ThousangGroupingStyle } from '../../src/utils/amount-formatter';
 
 const renderAmount = (props: Partial<AmountProps> = {}) => {
   const defaultProps: AmountProps = {
@@ -48,7 +48,7 @@ describe('<Amount />', () => {
 
   test('user types valid values to the amount field in US format', async () => {
     const onChange = jest.fn();
-    renderAmount({ onChange: onChange });
+    renderAmount({ onChange });
 
     const inputField = screen.getByTestId('reactAmount');
 
@@ -66,7 +66,7 @@ describe('<Amount />', () => {
     expect(onChange).toHaveBeenCalledTimes(10);
     expect(onChange).toHaveBeenLastCalledWith({
       formatted: '1,234,567.89',
-      float: 1234567.89,
+      float: 1_234_567.89,
       raw: '1234567.89',
     });
 
@@ -75,7 +75,7 @@ describe('<Amount />', () => {
     expect(onChange).toHaveBeenCalledTimes(11);
     expect(onChange).toHaveBeenLastCalledWith({
       formatted: '1,234,567.89',
-      float: 1234567.89,
+      float: 1_234_567.89,
       raw: '1234567.89',
     });
   });
@@ -83,7 +83,7 @@ describe('<Amount />', () => {
   test('user types valid values to the amount field in mixed Lakh format with European format', async () => {
     const onChange = jest.fn();
     renderAmount({
-      onChange: onChange,
+      onChange,
       decimalSeparator: ',',
       thousandSeparator: ' ',
       thousandGrouping: ThousangGroupingStyle.LAKH,
@@ -96,7 +96,7 @@ describe('<Amount />', () => {
     expect(onChange).toHaveBeenCalledTimes(11);
     expect(onChange).toHaveBeenLastCalledWith({
       formatted: '1 23 45 678,90',
-      float: 12345678.9,
+      float: 12_345_678.9,
       raw: '12345678.90',
     });
   });
@@ -104,7 +104,7 @@ describe('<Amount />', () => {
   test('user types backspace or delete on empty field', async () => {
     const onChange = jest.fn();
     renderAmount({
-      onChange: onChange,
+      onChange,
       decimalSeparator: ',',
       thousandSeparator: ' ',
       thousandGrouping: ThousangGroupingStyle.WAN,
@@ -126,7 +126,7 @@ describe('<Amount />', () => {
   test('user types backspace on decimal separator', async () => {
     const onChange = jest.fn();
     renderAmount({
-      onChange: onChange,
+      onChange,
       decimalSeparator: ',',
       thousandSeparator: ' ',
       thousandGrouping: ThousangGroupingStyle.WAN,
@@ -139,7 +139,7 @@ describe('<Amount />', () => {
     expect(onChange).toHaveBeenCalledTimes(11);
     expect(onChange).toHaveBeenLastCalledWith({
       formatted: '1234 5678,90',
-      float: 12345678.9,
+      float: 12_345_678.9,
       raw: '12345678.90',
     });
 
@@ -148,7 +148,7 @@ describe('<Amount />', () => {
     expect(onChange).toHaveBeenCalledTimes(12);
     expect(onChange).toHaveBeenLastCalledWith({
       formatted: '12 3456 7890',
-      float: 1234567890,
+      float: 1_234_567_890,
       raw: '1234567890',
     });
   });
@@ -156,7 +156,7 @@ describe('<Amount />', () => {
   test('user types delete on decimal separator', async () => {
     const onChange = jest.fn();
     renderAmount({
-      onChange: onChange,
+      onChange,
       decimalSeparator: ',',
       thousandSeparator: ' ',
       thousandGrouping: ThousangGroupingStyle.WAN,
@@ -169,7 +169,7 @@ describe('<Amount />', () => {
     expect(onChange).toHaveBeenCalledTimes(11);
     expect(onChange).toHaveBeenLastCalledWith({
       formatted: '1234 5678,90',
-      float: 12345678.9,
+      float: 12_345_678.9,
       raw: '12345678.90',
     });
 
@@ -178,7 +178,7 @@ describe('<Amount />', () => {
     expect(onChange).toHaveBeenCalledTimes(12);
     expect(onChange).toHaveBeenLastCalledWith({
       formatted: '12 3456 7890',
-      float: 1234567890,
+      float: 1_234_567_890,
       raw: '1234567890',
     });
   });
@@ -186,7 +186,7 @@ describe('<Amount />', () => {
   test('user types backspace on thousand separator', async () => {
     const onChange = jest.fn();
     renderAmount({
-      onChange: onChange,
+      onChange,
     });
 
     const inputField = screen.getByTestId('reactAmount');
@@ -196,19 +196,19 @@ describe('<Amount />', () => {
     expect(onChange).toHaveBeenCalledTimes(11);
     expect(onChange).toHaveBeenLastCalledWith({
       formatted: '12,345,678.90',
-      float: 12345678.9,
+      float: 12_345_678.9,
       raw: '12345678.90',
     });
 
     userEvent.type(
       inputField,
-      '{arrowleft}{arrowleft}{arrowleft}{arrowleft}{arrowleft}{arrowleft}{backspace}'
+      '{arrowleft}{arrowleft}{arrowleft}{arrowleft}{arrowleft}{arrowleft}{backspace}',
     );
     expect(inputField).toHaveValue('1,234,678.90');
     expect(onChange).toHaveBeenCalledTimes(12);
     expect(onChange).toHaveBeenLastCalledWith({
       formatted: '1,234,678.90',
-      float: 1234678.9,
+      float: 1_234_678.9,
       raw: '1234678.90',
     });
   });
@@ -216,7 +216,7 @@ describe('<Amount />', () => {
   test('user types delete on thousand separator', async () => {
     const onChange = jest.fn();
     renderAmount({
-      onChange: onChange,
+      onChange,
     });
 
     const inputField = screen.getByTestId('reactAmount');
@@ -226,19 +226,19 @@ describe('<Amount />', () => {
     expect(onChange).toHaveBeenCalledTimes(11);
     expect(onChange).toHaveBeenLastCalledWith({
       formatted: '12,345,678.90',
-      float: 12345678.9,
+      float: 12_345_678.9,
       raw: '12345678.90',
     });
 
     userEvent.type(
       inputField,
-      '{arrowleft}{arrowleft}{arrowleft}{arrowleft}{arrowleft}{arrowleft}{arrowleft}{delete}'
+      '{arrowleft}{arrowleft}{arrowleft}{arrowleft}{arrowleft}{arrowleft}{arrowleft}{delete}',
     );
     expect(inputField).toHaveValue('1,234,578.90');
     expect(onChange).toHaveBeenCalledTimes(12);
     expect(onChange).toHaveBeenLastCalledWith({
       formatted: '1,234,578.90',
-      float: 1234578.9,
+      float: 1_234_578.9,
       raw: '1234578.90',
     });
   });
@@ -246,7 +246,7 @@ describe('<Amount />', () => {
   test('user types delete on digits causing thousand separator to disappear', async () => {
     const onChange = jest.fn();
     renderAmount({
-      onChange: onChange,
+      onChange,
     });
 
     const inputField = screen.getByTestId('reactAmount');
@@ -256,19 +256,19 @@ describe('<Amount />', () => {
     expect(onChange).toHaveBeenCalledTimes(11);
     expect(onChange).toHaveBeenLastCalledWith({
       formatted: '12,345,678.90',
-      float: 12345678.9,
+      float: 12_345_678.9,
       raw: '12345678.90',
     });
 
     userEvent.type(
       inputField,
-      '{arrowleft}{arrowleft}{arrowleft}{backspace}{backspace}{backspace}'
+      '{arrowleft}{arrowleft}{arrowleft}{backspace}{backspace}{backspace}',
     );
     expect(inputField).toHaveValue('12,345.90');
     expect(onChange).toHaveBeenCalledTimes(14);
     expect(onChange).toHaveBeenLastCalledWith({
       formatted: '12,345.90',
-      float: 12345.9,
+      float: 12_345.9,
       raw: '12345.90',
     });
   });
@@ -276,7 +276,7 @@ describe('<Amount />', () => {
   test('user types delete on a selection', async () => {
     const onChange = jest.fn();
     renderAmount({
-      onChange: onChange,
+      onChange,
     });
 
     const inputField = screen.getByTestId<HTMLInputElement>('reactAmount');
@@ -286,7 +286,7 @@ describe('<Amount />', () => {
     expect(onChange).toHaveBeenCalledTimes(11);
     expect(onChange).toHaveBeenLastCalledWith({
       formatted: '12,345,678.90',
-      float: 12345678.9,
+      float: 12_345_678.9,
       raw: '12345678.90',
     });
 
@@ -296,7 +296,7 @@ describe('<Amount />', () => {
     expect(onChange).toHaveBeenCalledTimes(12);
     expect(onChange).toHaveBeenLastCalledWith({
       formatted: '123,456',
-      float: 123456,
+      float: 123_456,
       raw: '123456',
     });
   });
@@ -316,7 +316,11 @@ describe('<Amount />', () => {
     const onChange = jest.fn();
 
     const { rerender } = render(
-      <Amount name="reactAmount" dataTestId="reactAmount" onChange={onChange} />
+      <Amount
+        name="reactAmount"
+        dataTestId="reactAmount"
+        onChange={onChange}
+      />,
     );
 
     const inputField = screen.getByTestId('reactAmount');
@@ -341,9 +345,9 @@ describe('<Amount />', () => {
       <Amount
         name="reactAmount"
         dataTestId="reactAmount"
-        onChange={onChange}
         value="4567"
-      />
+        onChange={onChange}
+      />,
     );
     expect(inputField).toHaveValue('4,567');
     expect(onChange).toHaveBeenCalledTimes(4);
@@ -365,8 +369,8 @@ describe('<Amount />', () => {
       <Amount
         name="reactAmount"
         dataTestId="reactAmount"
-        className={'reactAmountClass'}
-      />
+        className="reactAmountClass"
+      />,
     );
     expect(container.firstChild).toHaveClass('input-wrapper');
     expect(container.firstChild).toHaveClass('reactAmountClass');
@@ -390,7 +394,7 @@ describe('<Amount />', () => {
 
   test('Wrapper should have readonly class', async () => {
     const { container } = render(
-      <Amount name="reactAmount" dataTestId="reactAmount" readonly />
+      <Amount readonly name="reactAmount" dataTestId="reactAmount" />,
     );
     expect(container.firstChild).toHaveClass('input-wrapper');
     expect(container.firstChild).toHaveClass('readonly');
