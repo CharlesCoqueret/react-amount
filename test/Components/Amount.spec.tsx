@@ -101,6 +101,34 @@ describe('<Amount />', () => {
     });
   });
 
+  test('user types very long series of digits', async () => {
+    const onChange = jest.fn();
+    renderAmount({
+      onChange,
+    });
+
+    const inputField = screen.getByTestId<HTMLInputElement>('reactAmount');
+
+    userEvent.type(inputField, '12345678.90');
+    expect(inputField).toHaveValue('12,345,678.90');
+    expect(onChange).toHaveBeenCalledTimes(11);
+    expect(onChange).toHaveBeenLastCalledWith({
+      formatted: '12,345,678.90',
+      float: 12_345_678.9,
+      raw: '12345678.90',
+    });
+
+    userEvent.type(inputField, '{arrowleft}'.repeat(4) + '9'.repeat(10));
+    expect(inputField).toHaveValue('123,456,799,999,999,998.90');
+    expect(onChange).toHaveBeenCalledTimes(21);
+    expect(onChange).toHaveBeenLastCalledWith({
+      formatted: '123,456,799,999,999,998.90',
+      // eslint-disable-next-line @typescript-eslint/no-loss-of-precision
+      float: 123_456_799_999_999_998.9,
+      raw: '123456799999999998.90',
+    });
+  });
+
   test('user types backspace or delete on empty field', async () => {
     const onChange = jest.fn();
     renderAmount({

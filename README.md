@@ -4,6 +4,10 @@
 [![MIT](https://img.shields.io/npm/l/react-amount?style=flat-square)](https://github.com/CharlesCoqueret/react-amount/blob/master/LICENSE.txt)
 [![Coverage Status](https://coveralls.io/repos/github/CharlesCoqueret/react-amount/badge.svg?branch=master)](https://coveralls.io/github/CharlesCoqueret/react-amount?branch=master)
 
+## Live demo
+
+[Live demo](https://codesandbox.io/s/demo-react-amount-640ii?file=/src/App.tsx)
+
 ## Installation
 
 ```
@@ -31,13 +35,17 @@ interface MyComponentProps {
 const MyComponent = (props: MyComponentProps): React.Element => {
   const { value } = props;
 
-  const [currentValue, setCurrentValue] = useState(value);
+  const [currentValue, setCurrentValue] = useState<string | number | undefined>(
+    value,
+  );
 
   return (
     <Amount
       value={currentValue}
       suffix="€"
-      onChange={(newValue) => setCurrentValue(newValue.float)}
+      onChange={(newValue) => setCurrentValue(newValue.raw)}
+      decimalSeparator=","
+      thousandSeparator=" "
     />
   );
 };
