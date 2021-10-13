@@ -86,12 +86,14 @@ it('commonValidation should throw error when input are incorrect', () => {
   }).toThrow('thousandSeparator and decimalSeparator must be different');
   expect(() => {
     commonValidation('100000', 2, ' .', '.');
-  }).toThrow('thousandSeparator and decimalSeparator must be different');
+  }).toThrow('decimalSeparator must be a single character long');
   expect(() => {
     commonValidation('100000', 2, '.', ' . ');
-  }).toThrow('thousandSeparator and decimalSeparator must be different');
+  }).toThrow(
+    'thousandSeparator must be either an empty character or a single character long',
+  );
   expect(() => {
-    commonValidation('100000', 2, ' ', ' . ');
+    commonValidation('100000', 2, ' ', '.');
   }).toThrow('decimalSeparator must be a non blank character');
 });
 
@@ -124,7 +126,7 @@ it('commonValidation extract information from input', () => {
     approximation: false,
   });
 
-  expect(commonValidation('3245223,09,43', 2, ',', ' ')).toEqual({
+  expect(commonValidation('3245223,09,43', 2, ',', '')).toEqual({
     sign: '',
     integer: '3245223',
     decimal: '09',
@@ -174,6 +176,9 @@ it('Basic interpretting', () => {
   expect(interpretValue('1.2345.6789,00000', 5, ',', '.')).toEqual(
     '123456789.00000',
   );
+  expect(interpretValue('123456789,00000', 5, ',', '')).toEqual(
+    '123456789.00000',
+  );
   expect(interpretValue('12.34.56.789,00000', 5, ',', '.')).toEqual(
     '123456789.00000',
   );
@@ -190,11 +195,10 @@ it('Errornous formatting', () => {
     interpretValue('100000', 2, '.', '.');
   }).toThrow('thousandSeparator and decimalSeparator must be different');
   expect(() => {
-    interpretValue('100000', 2, ' .', '.');
-  }).toThrow('thousandSeparator and decimalSeparator must be different');
-  expect(() => {
     interpretValue('100000', 2, '.', ' . ');
-  }).toThrow('thousandSeparator and decimalSeparator must be different');
+  }).toThrow(
+    'thousandSeparator must be either an empty character or a single character long',
+  );
 });
 
 it('Basic formatting for display of positive values', () => {
@@ -213,7 +217,9 @@ it('Basic formatting for display of positive values', () => {
   expect(
     formatInputForDisplay(123_456_789, 5, ',', '.', ThousangGroupingStyle.LAKH),
   ).toEqual('12.34.56.789,00000');
-
+  expect(formatInputForDisplay(11_223_344_556_677.123, 4, '.', '')).toEqual(
+    '11223344556677.1230',
+  );
   // eslint-disable-next-line @typescript-eslint/no-loss-of-precision
   expect(formatInputForDisplay(11_223_344_556_677.1234, 4)).toEqual(
     '11,223,344,556,677.1230',
@@ -262,7 +268,7 @@ it('String formatting for display', () => {
   expect(formatInputForDisplay('1000.551', 1)).toEqual('1,000.5');
   expect(formatInputForDisplay('67000', 5, ',', '.')).toEqual('67.000,00000');
   expect(formatInputForDisplay('0.9', 0)).toEqual('0');
-  expect(formatInputForDisplay('-0.01', 1)).toEqual('0.0');
+  expect(formatInputForDisplay('-0.01', -1)).toEqual('0.0');
   expect(formatInputForDisplay('11223344556677.12340', 4)).toEqual(
     '11,223,344,556,677.1234',
   );
@@ -289,12 +295,6 @@ it('Errornous formatting for display', () => {
 
   expect(() => {
     formatInputForDisplay('100000', -2, '.', '.');
-  }).toThrow('thousandSeparator and decimalSeparator must be different');
-  expect(() => {
-    formatInputForDisplay('100000', -2, ' .', '.');
-  }).toThrow('thousandSeparator and decimalSeparator must be different');
-  expect(() => {
-    formatInputForDisplay('100000', -2, '.', ' . ');
   }).toThrow('thousandSeparator and decimalSeparator must be different');
 });
 
@@ -395,8 +395,10 @@ it('Errornous formatting for input', () => {
   }).toThrow('thousandSeparator and decimalSeparator must be different');
   expect(() => {
     formatInputForInput('100000', -2, ' .', '.');
-  }).toThrow('thousandSeparator and decimalSeparator must be different');
+  }).toThrow('decimalSeparator must be a single character long');
   expect(() => {
     formatInputForInput('100000', -2, '.', ' . ');
-  }).toThrow('thousandSeparator and decimalSeparator must be different');
+  }).toThrow(
+    'thousandSeparator must be either an empty character or a single character long',
+  );
 });

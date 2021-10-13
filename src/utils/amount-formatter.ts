@@ -127,12 +127,22 @@ export const commonValidation = (
   decimal: string | undefined;
   approximation: boolean;
 } => {
-  if (decimalSeparator.trim() === thousandSeparator.trim()) {
-    throw new Error('thousandSeparator and decimalSeparator must be different');
+  if (decimalSeparator.length !== 1) {
+    throw new Error('decimalSeparator must be a single character long');
   }
 
-  if (decimalSeparator.trim() === '') {
+  if (thousandSeparator.length > 1) {
+    throw new Error(
+      'thousandSeparator must be either an empty character or a single character long',
+    );
+  }
+
+  if (decimalSeparator.replace(/\s/g, '') === '') {
     throw new Error('decimalSeparator must be a non blank character');
+  }
+
+  if (decimalSeparator === thousandSeparator) {
+    throw new Error('thousandSeparator and decimalSeparator must be different');
   }
 
   if (typeof value === 'string') {

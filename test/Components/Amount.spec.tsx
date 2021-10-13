@@ -173,7 +173,7 @@ describe('<Amount />', () => {
       raw: '12345678.90',
     });
 
-    userEvent.type(inputField, '{arrowleft}{arrowleft}{arrowleft}{delete}');
+    userEvent.type(inputField, '{arrowleft}'.repeat(3) + '{delete}');
     expect(inputField).toHaveValue('12 3456 7890');
     expect(onChange).toHaveBeenCalledTimes(12);
     expect(onChange).toHaveBeenLastCalledWith({
@@ -200,10 +200,7 @@ describe('<Amount />', () => {
       raw: '12345678.90',
     });
 
-    userEvent.type(
-      inputField,
-      '{arrowleft}{arrowleft}{arrowleft}{arrowleft}{arrowleft}{arrowleft}{backspace}',
-    );
+    userEvent.type(inputField, '{arrowleft}'.repeat(6) + '{backspace}');
     expect(inputField).toHaveValue('1,234,678.90');
     expect(onChange).toHaveBeenCalledTimes(12);
     expect(onChange).toHaveBeenLastCalledWith({
@@ -230,10 +227,7 @@ describe('<Amount />', () => {
       raw: '12345678.90',
     });
 
-    userEvent.type(
-      inputField,
-      '{arrowleft}{arrowleft}{arrowleft}{arrowleft}{arrowleft}{arrowleft}{arrowleft}{delete}',
-    );
+    userEvent.type(inputField, '{arrowleft}'.repeat(7) + '{delete}');
     expect(inputField).toHaveValue('1,234,578.90');
     expect(onChange).toHaveBeenCalledTimes(12);
     expect(onChange).toHaveBeenLastCalledWith({
@@ -243,7 +237,7 @@ describe('<Amount />', () => {
     });
   });
 
-  test('user types delete on digits causing thousand separator to disappear', async () => {
+  test('user types backspace on digits causing thousand separator to disappear', async () => {
     const onChange = jest.fn();
     renderAmount({
       onChange,
@@ -262,7 +256,7 @@ describe('<Amount />', () => {
 
     userEvent.type(
       inputField,
-      '{arrowleft}{arrowleft}{arrowleft}{backspace}{backspace}{backspace}',
+      '{arrowleft}'.repeat(3) + '{backspace}'.repeat(3),
     );
     expect(inputField).toHaveValue('12,345.90');
     expect(onChange).toHaveBeenCalledTimes(14);
@@ -270,6 +264,65 @@ describe('<Amount />', () => {
       formatted: '12,345.90',
       float: 12_345.9,
       raw: '12345.90',
+    });
+  });
+
+  test('user types backspace on digits causing thousand empty separator', async () => {
+    const onChange = jest.fn();
+    renderAmount({
+      onChange,
+      thousandSeparator: '',
+    });
+
+    const inputField = screen.getByTestId('reactAmount');
+
+    userEvent.type(inputField, '12345678.90');
+    expect(inputField).toHaveValue('12345678.90');
+    expect(onChange).toHaveBeenCalledTimes(11);
+    expect(onChange).toHaveBeenLastCalledWith({
+      formatted: '12345678.90',
+      float: 12_345_678.9,
+      raw: '12345678.90',
+    });
+
+    userEvent.type(
+      inputField,
+      '{arrowleft}'.repeat(6) + '{backspace}'.repeat(3),
+    );
+    expect(inputField).toHaveValue('12678.90');
+    expect(onChange).toHaveBeenCalledTimes(14);
+    expect(onChange).toHaveBeenLastCalledWith({
+      formatted: '12678.90',
+      float: 12_678.9,
+      raw: '12678.90',
+    });
+  });
+
+  test('user types delete on digits causing thousand empty separator', async () => {
+    const onChange = jest.fn();
+    renderAmount({
+      onChange,
+      thousandSeparator: '',
+    });
+
+    const inputField = screen.getByTestId('reactAmount');
+
+    userEvent.type(inputField, '12345678.90');
+    expect(inputField).toHaveValue('12345678.90');
+    expect(onChange).toHaveBeenCalledTimes(11);
+    expect(onChange).toHaveBeenLastCalledWith({
+      formatted: '12345678.90',
+      float: 12_345_678.9,
+      raw: '12345678.90',
+    });
+
+    userEvent.type(inputField, '{arrowleft}'.repeat(10) + '{delete}'.repeat(3));
+    expect(inputField).toHaveValue('15678.90');
+    expect(onChange).toHaveBeenCalledTimes(14);
+    expect(onChange).toHaveBeenLastCalledWith({
+      formatted: '15678.90',
+      float: 15_678.9,
+      raw: '15678.90',
     });
   });
 
