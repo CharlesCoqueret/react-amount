@@ -20,9 +20,11 @@ npm install react-amount
 
 ```typescript
 import React, { useState } from 'react';
-import Amount from 'react-currency-input';
+import Amount from 'react-amount';
 
-interface MyComponent {
+import '~/react-amount/dist/style/index.min.css';
+
+interface MyComponentProps {
   value: string | number | undefined;
 }
 
@@ -30,6 +32,7 @@ const MyComponent = (props: MyComponentProps): React.Element => {
   const { value } = props;
 
   const [currentValue, setCurrentValue] = useState(value);
+
   return (
     <Amount
       value={currentValue}
@@ -44,22 +47,22 @@ export default MyComponent;
 
 ## Options
 
-|      Option       |                           Type                            | Default value | Description                                       |
-| :---------------: | :-------------------------------------------------------: | :-----------: | ------------------------------------------------- |
-|       value       |                     string \| number                      |   undefined   | Initial value of the control                      |
-|     readonly      |                          boolean                          |     false     | Value is not editable                             |
-|       name        |                          string                           |   mandatory   | Name of the input field                           |
-|     className     |                          string                           |   undefined   | Class to be added to the wrapper of the component |
-|     onChange      | (updatedObject: FormattedValues) => void \| Promise<void> |   undefined   | Callback function to handle value changes         |
-|     decimals      |                          number                           |       2       | Number of decimals                                |
-| decimalSeparator  |                          string                           |       .       | Decimal separator                                 |
-| thousandSeparator |                          string                           |       ,       | Thousand separator                                |
-| thousandGrouping  |   ThousangGroupingStyle: "thousand" \| "wan" \| "lakh"    |   thousand    | Thousand grouping style                           |
-| displayOnInvalid  |                          string                           |       -       | Value displayed on invalid input in readonly      |
-|    dataTestId     |                          string                           |   undefined   | Id value for testing                              |
-|     required      |                          boolean                          |     false     | Required of the input field                       |
-|      prefix       |                          string                           |   undefined   | Prefix                                            |
-|      suffix       |                          string                           |   undefined   | Suffix                                            |
+|      Option       |                         Type                         | Default value | Description                                       |
+| :---------------: | :--------------------------------------------------: | :-----------: | ------------------------------------------------- |
+|       value       |                   string \| number                   |   undefined   | Initial value of the control                      |
+|     readonly      |                       boolean                        |     false     | Value is not editable                             |
+|       name        |                        string                        |   mandatory   | Name of the input field                           |
+|     className     |                        string                        |   undefined   | Class to be added to the wrapper of the component |
+|     onChange      |          (update: FormattedValues) => void           |   undefined   | Callback function to handle value changes         |
+|     decimals      |                        number                        |       2       | Number of decimals                                |
+| decimalSeparator  |                        string                        |       .       | Decimal separator                                 |
+| thousandSeparator |                        string                        |       ,       | Thousand separator                                |
+| thousandGrouping  | ThousangGroupingStyle: "thousand" \| "wan" \| "lakh" |   thousand    | Thousand grouping style                           |
+| displayOnInvalid  |                        string                        |       -       | Value displayed on invalid input in readonly      |
+|    dataTestId     |                        string                        |   undefined   | Id value for testing                              |
+|     required      |                       boolean                        |     false     | Required of the input field                       |
+|      prefix       |                        string                        |   undefined   | Prefix                                            |
+|      suffix       |                        string                        |   undefined   | Suffix                                            |
 
 ## Contributing
 
