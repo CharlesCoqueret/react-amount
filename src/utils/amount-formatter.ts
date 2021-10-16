@@ -248,7 +248,13 @@ export const commonValidation = (
 
   const approximation = validateNumber(value);
 
-  const [sign, number] = manageSign(String(value));
+  const inputToString = String(
+    value?.toLocaleString('fullwide', {
+      useGrouping: false,
+    }),
+  );
+
+  const [sign, number] = manageSign(inputToString);
 
   const precision = Number.isFinite(Number(decimals)) ? Math.abs(decimals) : 0;
 
