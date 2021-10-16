@@ -1,3 +1,22 @@
+export enum ThousangGroupingStyle {
+  THOUSAND = 'thousand',
+  WAN = 'wan',
+  LAKH = 'lakh',
+}
+
+const defaultDecimals = 0;
+const defaultDecimalSeparator = '.';
+const defaultThousandSeparator = ',';
+const defaultThousandGrouping = ThousangGroupingStyle.THOUSAND;
+const defaultDisplayOnInvalid = '-';
+
+/**
+ * Remove all non digits characters from a string
+ *
+ * @param value incomin string
+ *
+ * @returns string with only digits
+ */
 export const getDigitsOnly = (value: string) => {
   return value.replace(/\D/g, '');
 };
@@ -58,11 +77,13 @@ export const manageSign = (value: string): [string, string] => {
 };
 
 /**
+ * Converts a string with custom decimal and thousand separators to standard.
  *
- * @param value
- * @param decimalSeparator
- * @param thousandSeparator
- * @returns
+ * @param value incoming value
+ * @param decimalSeparator custom decimal separator
+ * @param thousandSeparator custom thousand separator
+ *
+ * @returns string with standard separator
  */
 export const toStandardSeparator = (
   value: string,
@@ -77,22 +98,94 @@ export const toStandardSeparator = (
 };
 
 /**
+ * Provides the thousand grouping style regex
  *
- * @param number
- * @returns
+ * @param thousandsGroupStyle
+ *
+ * @returns corresponding regex
  */
-export const validateNumber = (
-  number: number | string | undefined,
-): boolean => {
-  if (number === undefined) {
+const getThousandsGroupRegex = (thousandsGroupStyle: ThousangGroupingStyle) => {
+  switch (thousandsGroupStyle) {
+    case ThousangGroupingStyle.LAKH:
+      return /(\d+?)(?=(\d\d)+(\d)(?!\d))(\.\d+)?/g;
+    case ThousangGroupingStyle.WAN:
+      return /(\d)(?=(\d{4})+(?!\d))/g;
+    case ThousangGroupingStyle.THOUSAND:
+    default:
+      return /(\d)(?=(\d{3})+(?!\d))/g;
+  }
+};
+
+/**
+ * Trim zeros on the left, leaving one if the trimmed version is an empty string
+ *
+ * @param value incoming string
+ *
+ * @returns value trimmed on the left of its zeros
+ */
+const ltrim = (value: string | undefined): string => {
+  value = value?.replace(/^0+/g, '') ?? '';
+
+  if (value === '') {
+    return '0';
+  }
+
+  return value;
+};
+
+/**
+ * Trim zeros on the right
+ *
+ * @param value incoming value
+ *
+ * @returnsvalue trimmed on the right of its zeros
+ */
+const rtrim = (value: string | undefined): string => {
+  return value?.replace(/0+$/g, '') ?? '';
+};
+
+/**
+ * Apply thousand separator to the incoming value
+ *
+ * @param value incoming value
+ * @param thousandSeparator custom thousandSeparator
+ * @param thousandsGroupStyle custom thousand grouping style
+ *
+ * @returns formatted value to custom thousand grouping style
+ */
+const applyThousandSeparator = (
+  value: string,
+  thousandSeparator: string,
+  thousandsGroupStyle: ThousangGroupingStyle,
+) => {
+  const thousandsGroupRegex = getThousandsGroupRegex(thousandsGroupStyle);
+  let index = value.search(/[1-9]/);
+  index = index === -1 ? value.length : index;
+  return (
+    value.slice(0, Math.max(0, index)) +
+    value
+      .slice(index, value.length)
+      .replace(thousandsGroupRegex, '$1' + thousandSeparator)
+  );
+};
+
+/**
+ * Indicates if the value is valid
+ *
+ * @param value incoming value
+ *
+ * @returns boolean indicating that the value is valid or approximated
+ */
+export const validateNumber = (value: number | string | undefined): boolean => {
+  if (value === undefined) {
     return true;
   }
 
-  if (typeof number === 'number') {
-    return !Number.isFinite(number);
+  if (typeof value === 'number') {
+    return !Number.isFinite(value);
   }
 
-  const result = String(number).match(/-?\d*\.\d*|-?\d+/g);
+  const result = String(value).match(/-?\d*\.\d*|-?\d+/g);
   if (!result || result.length === 0) {
     return true;
   }
@@ -101,21 +194,25 @@ export const validateNumber = (
     return true;
   }
 
-  return result[0] !== number;
+  return result[0] !== value;
 };
 
-export enum ThousangGroupingStyle {
-  THOUSAND = 'thousand',
-  WAN = 'wan',
-  LAKH = 'lakh',
-}
-
-const defaultDecimals = 0;
-const defaultDecimalSeparator = '.';
-const defaultThousandSeparator = ',';
-const defaultThousandGrouping = ThousangGroupingStyle.THOUSAND;
-const defaultDisplayOnInvalid = '-';
-
+/**
+ * Extracts sign, integer and decimal part and flag if approximated
+ *
+ * @param value incoming value
+ * @param decimals number of decimal digits expected
+ * @param decimalSeparator custom decimal separator
+ * @param thousandSeparator custom decimal separator
+ *
+ * @throws errors:
+ *  - 'decimalSeparator must be a single character long'
+ *  - 'thousandSeparator must be either an empty character or a single character long'
+ *  - 'decimalSeparator must be a non blank character'
+ *  - 'thousandSeparator and decimalSeparator must be different'
+ *
+ * @returns Object with sign, integer and decimal values and approximation
+ */
 export const commonValidation = (
   value: string | number | undefined,
   decimals: number = defaultDecimals,
@@ -151,7 +248,13 @@ export const commonValidation = (
 
   const approximation = validateNumber(value);
 
-  const [sign, number] = manageSign(String(value));
+  const inputToString = String(
+    value?.toLocaleString('fullwide', {
+      useGrouping: false,
+    }),
+  );
+
+  const [sign, number] = manageSign(inputToString);
 
   const precision = Number.isFinite(Number(decimals)) ? Math.abs(decimals) : 0;
 
@@ -162,6 +265,16 @@ export const commonValidation = (
   return { sign, integer, decimal, approximation };
 };
 
+/**
+ * Builds string from the incoming value
+ *
+ * @param value incoming value
+ * @param decimals number of decimal digits
+ * @param decimalSeparator custom decimal separator
+ * @param thousandSeparator custom thousand separator
+ *
+ * @returns signle intepreted string as standard js number
+ */
 export const interpretValue = (
   value: string | number | undefined,
   decimals: number = defaultDecimals,
@@ -178,6 +291,18 @@ export const interpretValue = (
   return sign + integer + (decimal === undefined ? '' : '.' + decimal);
 };
 
+/**
+ *  Format incoming value for display only
+ *
+ * @param value incoming value
+ * @param decimals number of decimal digits
+ * @param decimalSeparator custom decimal separator
+ * @param thousandSeparator custom thousand separator
+ * @param thousandGrouping custom thousand grouping style
+ * @param displayOnInvalid display on invalid character
+ *
+ * @returns formatted incoming value for display
+ */
 export const formatInputForDisplay = (
   value: string | number | undefined,
   decimals: number = defaultDecimals,
@@ -229,6 +354,17 @@ export const formatInputForDisplay = (
   return formattedInteger + formattedDecimal;
 };
 
+/**
+ *  Format incoming value for input only
+ *
+ * @param value incoming value
+ * @param decimals number of decimal digits
+ * @param decimalSeparator custom decimal separator
+ * @param thousandSeparator custom thousand separator
+ * @param thousandGrouping custom thousand grouping style
+ *
+ * @returns formatted incoming value for input
+ */
 export const formatInputForInput = (
   value: string | number | undefined,
   decimals: number = defaultDecimals,
@@ -249,53 +385,5 @@ export const formatInputForInput = (
 
   return (
     formattedInteger + (decimal === undefined ? '' : decimalSeparator + decimal)
-  );
-};
-
-/**
- * Provides the thousand grouping style regex
- *
- * @param thousandsGroupStyle
- * @returns corresponding regex
- */
-const getThousandsGroupRegex = (thousandsGroupStyle: ThousangGroupingStyle) => {
-  switch (thousandsGroupStyle) {
-    case ThousangGroupingStyle.LAKH:
-      return /(\d+?)(?=(\d\d)+(\d)(?!\d))(\.\d+)?/g;
-    case ThousangGroupingStyle.WAN:
-      return /(\d)(?=(\d{4})+(?!\d))/g;
-    case ThousangGroupingStyle.THOUSAND:
-    default:
-      return /(\d)(?=(\d{3})+(?!\d))/g;
-  }
-};
-
-const ltrim = (inputString: string): string => {
-  inputString = inputString.replace(/^0+/g, '') || '';
-
-  if (inputString === '') {
-    return '0';
-  }
-
-  return inputString;
-};
-
-const rtrim = (inputString: string | undefined): string => {
-  return inputString?.replace(/0+$/g, '') ?? '';
-};
-
-const applyThousandSeparator = (
-  input: string,
-  thousandSeparator: string,
-  thousandsGroupStyle: ThousangGroupingStyle,
-) => {
-  const thousandsGroupRegex = getThousandsGroupRegex(thousandsGroupStyle);
-  let index = input.search(/[1-9]/);
-  index = index === -1 ? input.length : index;
-  return (
-    input.slice(0, Math.max(0, index)) +
-    input
-      .slice(index, input.length)
-      .replace(thousandsGroupRegex, '$1' + thousandSeparator)
   );
 };
