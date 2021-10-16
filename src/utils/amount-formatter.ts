@@ -123,8 +123,8 @@ const getThousandsGroupRegex = (thousandsGroupStyle: ThousangGroupingStyle) => {
  *
  * @returns value trimmed on the left of its zeros
  */
-const ltrim = (value: string | undefined): string => {
-  value = value?.replace(/^0+/g, '') ?? '';
+const ltrim = (value: string): string => {
+  value = value.replace(/^0+/g, '');
 
   if (value === '') {
     return '0';
