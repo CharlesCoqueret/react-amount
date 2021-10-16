@@ -1,35 +1,26 @@
-.input-wrapper {
+.amount-input-wrapper,
+.amount-input-wrapper *,
+.amount-text-wrapper,
+.amount-text-wrapper * {
+  font-size: 14px;
+}
+
+.amount-input-wrapper {
   display: flex;
   background-color: white;
   border: 1px solid #7b7b93;
   margin: 10px 0;
   border-radius: 5px;
+  min-width: min-content;
 
   &.focus {
     border: 1px solid orange;
-  }
-
-  &.readonly {
-    border: 0;
-    input {
-      text-align: left;
-      width: fit-content;
-      padding: 5px;
-    }
-    .prefix {
-      padding: 5px 0px;
-    }
-
-    .suffix {
-      padding: 5px 0px;
-    }
   }
 
   .prefix,
   .suffix {
     position: relative;
     color: #7b7b93;
-    font-size: 14px;
   }
 
   .prefix {
@@ -44,11 +35,25 @@
     background-color: transparent;
     position: relative;
     width: 100%;
+    min-width: 80px;
     padding: 15px;
-    color: #36454f;
     outline: none;
     border: none;
-    font-size: 14px;
     text-align: right;
+  }
+}
+
+.amount-text-wrapper {
+  .prefix,
+  .suffix {
+    position: relative;
+    color: #7b7b93;
+  }
+  .prefix {
+    padding: 5px 0px;
+  }
+
+  .suffix {
+    padding: 5px 0px;
   }
 }

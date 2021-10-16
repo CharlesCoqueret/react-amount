@@ -19,7 +19,11 @@ export interface AmountProps {
   /** Value to be rendered as amount (default: undefined) */
   value?: string | number | undefined;
   /** Field is read only (default: false) */
-  readonly?: boolean;
+  readOnly?: boolean;
+  /** Field is disabled (default: false) */
+  disabled?: boolean;
+  /** Field is absent, an only formated value is available (default: false) */
+  textOnly?: boolean;
   /** Unique identifier of the field (used as id and key) */
   name: string;
   /** Class to be added to the wrapper of the input field */
@@ -34,7 +38,7 @@ export interface AmountProps {
   thousandSeparator?: string;
   /** Thousand style grouping (default: 'thousand') */
   thousandGrouping?: ThousangGroupingStyle;
-  /** Value displayed on invalid input in readonly (default: '-') */
+  /** Value displayed on invalid input in textOnly (default: '-') */
   displayOnInvalid?: string;
   /** Test id */
   dataTestId?: string;
@@ -50,7 +54,9 @@ const Amount = (props: AmountProps): React.ReactElement => {
   const {
     name,
     value,
-    readonly,
+    readOnly,
+    disabled,
+    textOnly,
     className,
     onChange,
     decimals,
@@ -70,7 +76,7 @@ const Amount = (props: AmountProps): React.ReactElement => {
   const getUnformattedValue = (value: string | number | undefined): string =>
     interpretValue(value, decimals, decimalSeparator, thousandSeparator);
   const getFormattedValue = (value: string | number | undefined): string =>
-    readonly
+    textOnly
       ? formatInputForDisplay(
           value,
           decimals,
@@ -191,11 +197,18 @@ const Amount = (props: AmountProps): React.ReactElement => {
     }
   };
 
+  if (textOnly)
+    return (
+      <div className="amount-text-wrapper textonly">{`${
+        prefix ? prefix + ' ' : ''
+      }${formattedValue}${suffix ? ' ' + suffix : ''}`}</div>
+    );
+
   return (
     <div
-      className={`input-wrapper ${focus ? 'focus' : ''} ${
-        readonly ? 'readonly' : ''
-      } ${className ? className : ''}`}>
+      className={`amount-input-wrapper ${focus ? 'focus' : ''} ${
+        className ? className : ''
+      }`}>
       <div className="prefix">{prefix}</div>
       <input
         key={name}
@@ -205,9 +218,9 @@ const Amount = (props: AmountProps): React.ReactElement => {
         value={formattedValue}
         name={name}
         data-testid={dataTestId}
-        readOnly={readonly}
+        readOnly={readOnly}
+        disabled={disabled}
         required={required}
-        size={readonly ? formattedValue.length - 1 : undefined}
         onChange={handleOnChange}
         onKeyDown={handleKeyDown}
         onFocus={() => {
@@ -217,7 +230,6 @@ const Amount = (props: AmountProps): React.ReactElement => {
           setFocus(false);
         }}
       />
-
       <div className="suffix">{suffix}</div>
     </div>
   );
@@ -225,7 +237,9 @@ const Amount = (props: AmountProps): React.ReactElement => {
 
 Amount.defaultProps = {
   value: undefined,
-  readonly: false,
+  readOnly: false,
+  disabled: false,
+  textOnly: false,
   decimals: 2,
   required: false,
   decimalSeparator: '.',
