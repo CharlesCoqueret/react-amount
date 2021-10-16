@@ -24,14 +24,14 @@ describe('<Amount />', () => {
     expect(inputField).toHaveValue('');
   });
 
-  test('should display a readonly value', async () => {
-    renderAmount({ readonly: true });
+  test('should display a textonly value', async () => {
+    const { container } = renderAmount({ textOnly: true });
 
-    const inputField = screen.getByTestId('reactAmount');
-    expect(inputField).toBeInTheDocument();
-    expect(inputField).toHaveAttribute('type', 'text');
-    expect(inputField).toHaveAttribute('readOnly');
-    expect(inputField).toHaveValue('-');
+    const field = container.firstChild;
+    expect(field).toBeInTheDocument();
+    expect(field).toHaveClass('amount-text-wrapper');
+    expect(field).toHaveClass('textonly');
+    expect(field).toHaveTextContent('-');
   });
 
   test('should display a value required', async () => {
@@ -453,44 +453,61 @@ describe('<Amount />', () => {
         className="reactAmountClass"
       />,
     );
-    expect(container.firstChild).toHaveClass('input-wrapper');
+    expect(container.firstChild).toHaveClass('amount-input-wrapper');
     expect(container.firstChild).toHaveClass('reactAmountClass');
     expect(container.firstChild).not.toHaveClass('focus');
-    expect(container.firstChild).not.toHaveClass('readonly');
+    expect(container.firstChild).not.toHaveClass('textonly');
 
     const inputField = screen.getByTestId('reactAmount');
 
     userEvent.click(inputField);
-    expect(container.firstChild).toHaveClass('input-wrapper');
+    expect(container.firstChild).toHaveClass('amount-input-wrapper');
     expect(container.firstChild).toHaveClass('reactAmountClass');
     expect(container.firstChild).toHaveClass('focus');
-    expect(container.firstChild).not.toHaveClass('readonly');
+    expect(container.firstChild).not.toHaveClass('textonly');
 
     userEvent.click(container);
-    expect(container.firstChild).toHaveClass('input-wrapper');
+    expect(container.firstChild).toHaveClass('amount-input-wrapper');
     expect(container.firstChild).toHaveClass('reactAmountClass');
     expect(container.firstChild).not.toHaveClass('focus');
-    expect(container.firstChild).not.toHaveClass('readonly');
+    expect(container.firstChild).not.toHaveClass('textonly');
   });
 
-  test('Wrapper should have readonly class', async () => {
+  test('Wrapper should have textonly class', async () => {
     const { container } = render(
-      <Amount readonly name="reactAmount" dataTestId="reactAmount" />,
+      <Amount textOnly name="reactAmount" dataTestId="reactAmount" />,
     );
-    expect(container.firstChild).toHaveClass('input-wrapper');
-    expect(container.firstChild).toHaveClass('readonly');
+    expect(container.firstChild).toHaveClass('amount-text-wrapper');
+    expect(container.firstChild).toHaveClass('textonly');
     expect(container.firstChild).not.toHaveClass('focus');
 
-    const inputField = screen.getByTestId('reactAmount');
+    expect(container.firstElementChild).toBeDefined();
 
-    userEvent.click(inputField);
-    expect(container.firstChild).toHaveClass('input-wrapper');
-    expect(container.firstChild).toHaveClass('readonly');
-    expect(container.firstChild).toHaveClass('focus');
+    userEvent.click(container.firstElementChild!);
+    expect(container.firstChild).toHaveClass('amount-text-wrapper');
+    expect(container.firstChild).toHaveClass('textonly');
+    expect(container.firstChild).not.toHaveClass('focus');
 
     userEvent.click(container);
-    expect(container.firstChild).toHaveClass('input-wrapper');
-    expect(container.firstChild).toHaveClass('readonly');
+    expect(container.firstChild).toHaveClass('amount-text-wrapper');
+    expect(container.firstChild).toHaveClass('textonly');
     expect(container.firstChild).not.toHaveClass('focus');
+  });
+
+  test('Wrapper should have textonly class', async () => {
+    const { container } = render(
+      <Amount
+        textOnly
+        name="reactAmount"
+        prefix="prefix"
+        suffix="suffix"
+        value="1234.5"
+        dataTestId="reactAmount"
+      />,
+    );
+    expect(container.firstChild).toHaveClass('amount-text-wrapper');
+    expect(container.firstChild).toHaveClass('textonly');
+    expect(container.firstChild).not.toHaveClass('focus');
+    expect(container.firstChild).toHaveTextContent('prefix 1,234.50 suffix');
   });
 });
