@@ -1,8 +1,8 @@
-import { Amount, ThousangGroupingStyle } from '../src/index';
+import { Amount, ThousandGroupingStyle } from '../src/index';
 
 describe('index main export', () => {
   test('should export all references', async () => {
     expect(Amount).toBeTruthy();
-    expect(ThousangGroupingStyle).toBeTruthy();
+    expect(ThousandGroupingStyle).toBeTruthy();
   });
 });

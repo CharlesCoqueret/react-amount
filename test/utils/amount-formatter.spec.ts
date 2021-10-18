@@ -7,7 +7,7 @@ import {
   commonValidation,
   interpretValue,
   formatInputForDisplay,
-  ThousangGroupingStyle,
+  ThousandGroupingStyle,
   formatInputForInput,
 } from '../../src/utils/amount-formatter';
 
@@ -212,10 +212,10 @@ it('Basic formatting for display of positive values', () => {
   expect(formatInputForDisplay(67_000, 5, ',', '.')).toEqual('67.000,00000');
   expect(formatInputForDisplay(0.9, 0)).toEqual('0');
   expect(
-    formatInputForDisplay(123_456_789, 5, ',', '.', ThousangGroupingStyle.WAN),
+    formatInputForDisplay(123_456_789, 5, ',', '.', ThousandGroupingStyle.WAN),
   ).toEqual('1.2345.6789,00000');
   expect(
-    formatInputForDisplay(123_456_789, 5, ',', '.', ThousangGroupingStyle.LAKH),
+    formatInputForDisplay(123_456_789, 5, ',', '.', ThousandGroupingStyle.LAKH),
   ).toEqual('12.34.56.789,00000');
   expect(formatInputForDisplay(11_223_344_556_677.123, 4, '.', '')).toEqual(
     '11223344556677.1230',
@@ -237,7 +237,7 @@ it('Basic formatting for display of negative values', () => {
   expect(formatInputForDisplay(-67_000, 5, ',', '.')).toEqual('-67.000,00000');
   expect(formatInputForDisplay(-0.9, 0)).toEqual('0');
   expect(
-    formatInputForDisplay(-123_456_789, 5, ',', '.', ThousangGroupingStyle.WAN),
+    formatInputForDisplay(-123_456_789, 5, ',', '.', ThousandGroupingStyle.WAN),
   ).toEqual('-1.2345.6789,00000');
   expect(
     formatInputForDisplay(
@@ -245,7 +245,7 @@ it('Basic formatting for display of negative values', () => {
       5,
       ',',
       '.',
-      ThousangGroupingStyle.LAKH,
+      ThousandGroupingStyle.LAKH,
     ),
   ).toEqual('-12.34.56.789,00000');
 
@@ -288,7 +288,7 @@ it('Errornous formatting for display', () => {
       5,
       ',',
       '.',
-      ThousangGroupingStyle.THOUSAND,
+      ThousandGroupingStyle.THOUSAND,
       '*',
     ),
   ).toEqual('*');
@@ -309,10 +309,10 @@ it('Basic formatting for input of positive values', () => {
   expect(formatInputForInput(67_000, 5, ',', '.')).toEqual('67.000');
   expect(formatInputForInput(0.9, 0)).toEqual('0');
   expect(
-    formatInputForInput(123_456_789, 5, ',', '.', ThousangGroupingStyle.WAN),
+    formatInputForInput(123_456_789, 5, ',', '.', ThousandGroupingStyle.WAN),
   ).toEqual('1.2345.6789');
   expect(
-    formatInputForInput(123_456_789, 5, ',', '.', ThousangGroupingStyle.LAKH),
+    formatInputForInput(123_456_789, 5, ',', '.', ThousandGroupingStyle.LAKH),
   ).toEqual('12.34.56.789');
 
   // eslint-disable-next-line @typescript-eslint/no-loss-of-precision
@@ -332,10 +332,10 @@ it('Basic formatting for input of negative values', () => {
   expect(formatInputForInput(-67_000, 5, ',', '.')).toEqual('-67.000');
   expect(formatInputForInput(-0.9, 0)).toEqual('-0');
   expect(
-    formatInputForInput(-123_456_789, 5, ',', '.', ThousangGroupingStyle.WAN),
+    formatInputForInput(-123_456_789, 5, ',', '.', ThousandGroupingStyle.WAN),
   ).toEqual('-1.2345.6789');
   expect(
-    formatInputForInput(-123_456_789, 5, ',', '.', ThousangGroupingStyle.LAKH),
+    formatInputForInput(-123_456_789, 5, ',', '.', ThousandGroupingStyle.LAKH),
   ).toEqual('-12.34.56.789');
 
   // eslint-disable-next-line @typescript-eslint/no-loss-of-precision
