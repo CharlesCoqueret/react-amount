@@ -6,7 +6,7 @@ import {
   formatInputForDisplay,
   formatInputForInput,
   interpretValue,
-  ThousangGroupingStyle,
+  ThousandGroupingStyle,
 } from '../utils/amount-formatter';
 
 export interface FormattedValues {
@@ -37,7 +37,7 @@ export interface AmountProps {
   /** Thousand separator (default: ',') */
   thousandSeparator?: string;
   /** Thousand style grouping (default: 'thousand') */
-  thousandGrouping?: ThousangGroupingStyle;
+  thousandGrouping?: ThousandGroupingStyle;
   /** Value displayed on invalid input in textOnly (default: '-') */
   displayOnInvalid?: string;
   /** Test id */
@@ -244,7 +244,7 @@ Amount.defaultProps = {
   required: false,
   decimalSeparator: '.',
   thousandSeparator: ',',
-  thousandGrouping: ThousangGroupingStyle.THOUSAND,
+  thousandGrouping: ThousandGroupingStyle.THOUSAND,
   displayOnInvalid: '-',
   dataTestId: undefined,
   prefix: undefined,

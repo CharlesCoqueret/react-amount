@@ -1,4 +1,4 @@
-export enum ThousangGroupingStyle {
+export enum ThousandGroupingStyle {
   THOUSAND = 'thousand',
   WAN = 'wan',
   LAKH = 'lakh',
@@ -7,7 +7,7 @@ export enum ThousangGroupingStyle {
 const defaultDecimals = 0;
 const defaultDecimalSeparator = '.';
 const defaultThousandSeparator = ',';
-const defaultThousandGrouping = ThousangGroupingStyle.THOUSAND;
+const defaultThousandGrouping = ThousandGroupingStyle.THOUSAND;
 const defaultDisplayOnInvalid = '-';
 
 /**
@@ -104,13 +104,13 @@ export const toStandardSeparator = (
  *
  * @returns corresponding regex
  */
-const getThousandsGroupRegex = (thousandsGroupStyle: ThousangGroupingStyle) => {
+const getThousandsGroupRegex = (thousandsGroupStyle: ThousandGroupingStyle) => {
   switch (thousandsGroupStyle) {
-    case ThousangGroupingStyle.LAKH:
+    case ThousandGroupingStyle.LAKH:
       return /(\d+?)(?=(\d\d)+(\d)(?!\d))(\.\d+)?/g;
-    case ThousangGroupingStyle.WAN:
+    case ThousandGroupingStyle.WAN:
       return /(\d)(?=(\d{4})+(?!\d))/g;
-    case ThousangGroupingStyle.THOUSAND:
+    case ThousandGroupingStyle.THOUSAND:
     default:
       return /(\d)(?=(\d{3})+(?!\d))/g;
   }
@@ -156,7 +156,7 @@ const rtrim = (value: string | undefined): string => {
 const applyThousandSeparator = (
   value: string,
   thousandSeparator: string,
-  thousandsGroupStyle: ThousangGroupingStyle,
+  thousandsGroupStyle: ThousandGroupingStyle,
 ) => {
   const thousandsGroupRegex = getThousandsGroupRegex(thousandsGroupStyle);
   let index = value.search(/[1-9]/);
@@ -308,7 +308,7 @@ export const formatInputForDisplay = (
   decimals: number = defaultDecimals,
   decimalSeparator: string = defaultDecimalSeparator,
   thousandSeparator: string = defaultThousandSeparator,
-  thousandGrouping: ThousangGroupingStyle = defaultThousandGrouping,
+  thousandGrouping: ThousandGroupingStyle = defaultThousandGrouping,
   displayOnInvalid: string = defaultDisplayOnInvalid,
 ): string => {
   const { sign, integer, decimal, approximation } = commonValidation(
@@ -370,7 +370,7 @@ export const formatInputForInput = (
   decimals: number = defaultDecimals,
   decimalSeparator: string = defaultDecimalSeparator,
   thousandSeparator: string = defaultThousandSeparator,
-  thousandGrouping: ThousangGroupingStyle = defaultThousandGrouping,
+  thousandGrouping: ThousandGroupingStyle = defaultThousandGrouping,
 ): string => {
   const { sign, integer, decimal } = commonValidation(
     value,

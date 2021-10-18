@@ -1,9 +1,10 @@
 {
   "name": "react-amount",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "React amount component",
-  "keyword": [
+  "keywords": [
     "react",
+    "react-component",
     "amount",
     "format",
     "number",

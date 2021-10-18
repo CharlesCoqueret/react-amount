@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { render, screen } from '@testing-library/react';
 
 import Amount, { AmountProps } from '../../src/Components/Amount';
-import { ThousangGroupingStyle } from '../../src/utils/amount-formatter';
+import { ThousandGroupingStyle } from '../../src/utils/amount-formatter';
 
 const renderAmount = (props: Partial<AmountProps> = {}) => {
   const defaultProps: AmountProps = {
@@ -86,7 +86,7 @@ describe('<Amount />', () => {
       onChange,
       decimalSeparator: ',',
       thousandSeparator: ' ',
-      thousandGrouping: ThousangGroupingStyle.LAKH,
+      thousandGrouping: ThousandGroupingStyle.LAKH,
     });
 
     const inputField = screen.getByTestId('reactAmount');
@@ -135,7 +135,7 @@ describe('<Amount />', () => {
       onChange,
       decimalSeparator: ',',
       thousandSeparator: ' ',
-      thousandGrouping: ThousangGroupingStyle.WAN,
+      thousandGrouping: ThousandGroupingStyle.WAN,
     });
 
     const inputField = screen.getByTestId('reactAmount');
@@ -157,7 +157,7 @@ describe('<Amount />', () => {
       onChange,
       decimalSeparator: ',',
       thousandSeparator: ' ',
-      thousandGrouping: ThousangGroupingStyle.WAN,
+      thousandGrouping: ThousandGroupingStyle.WAN,
     });
 
     const inputField = screen.getByTestId('reactAmount');
@@ -187,7 +187,7 @@ describe('<Amount />', () => {
       onChange,
       decimalSeparator: ',',
       thousandSeparator: ' ',
-      thousandGrouping: ThousangGroupingStyle.WAN,
+      thousandGrouping: ThousandGroupingStyle.WAN,
     });
 
     const inputField = screen.getByTestId('reactAmount');
