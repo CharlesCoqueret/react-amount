@@ -1,4 +1,4 @@
-import React, { useState, KeyboardEvent, useEffect } from 'react';
+import React, { useState, KeyboardEvent, useEffect, useCallback } from 'react';
 
 import { useRunAfterUpdate } from '../hooks/use-run-after-update';
 
@@ -75,23 +75,33 @@ const Amount = (props: AmountProps): React.ReactElement => {
    */
   const getUnformattedValue = (value: string | number | undefined): string =>
     interpretValue(value, decimals, decimalSeparator, thousandSeparator);
-  const getFormattedValue = (value: string | number | undefined): string =>
-    textOnly
-      ? formatInputForDisplay(
-          value,
-          decimals,
-          decimalSeparator,
-          thousandSeparator,
-          thousandGrouping,
-          displayOnInvalid,
-        )
-      : formatInputForInput(
-          value,
-          decimals,
-          decimalSeparator,
-          thousandSeparator,
-          thousandGrouping,
-        );
+  const getFormattedValue = useCallback(
+    (value: string | number | undefined): string =>
+      textOnly
+        ? formatInputForDisplay(
+            value,
+            decimals,
+            decimalSeparator,
+            thousandSeparator,
+            thousandGrouping,
+            displayOnInvalid,
+          )
+        : formatInputForInput(
+            value,
+            decimals,
+            decimalSeparator,
+            thousandSeparator,
+            thousandGrouping,
+          ),
+    [
+      textOnly,
+      decimals,
+      decimalSeparator,
+      thousandSeparator,
+      thousandGrouping,
+      displayOnInvalid,
+    ],
+  );
 
   /**
    * States: formatted value, focus
@@ -105,7 +115,7 @@ const Amount = (props: AmountProps): React.ReactElement => {
   // Initialize value at load time or whenever the value is updated
   useEffect(() => {
     setFormattedValue(getFormattedValue(value));
-  }, [value]);
+  }, [value, getFormattedValue]);
 
   /**
    * Hook managing the recursor position
@@ -215,6 +225,7 @@ const Amount = (props: AmountProps): React.ReactElement => {
         type="text"
         id={name}
         autoComplete="off"
+        inputMode="numeric"
         value={formattedValue}
         name={name}
         data-testid={dataTestId}

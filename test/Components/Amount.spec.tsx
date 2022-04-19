@@ -12,6 +12,7 @@ const renderAmount = (props: Partial<AmountProps> = {}) => {
     /** Unique identifier of the field */
     dataTestId: 'reactAmount',
   };
+
   return render(<Amount {...defaultProps} {...props} />);
 };
 
@@ -52,7 +53,7 @@ describe('<Amount />', () => {
 
     const inputField = screen.getByTestId('reactAmount');
 
-    userEvent.type(inputField, '1234');
+    await userEvent.type(inputField, '1234');
     expect(inputField).toHaveValue('1,234');
     expect(onChange).toHaveBeenCalledTimes(4);
     expect(onChange).toHaveBeenLastCalledWith({
@@ -61,7 +62,7 @@ describe('<Amount />', () => {
       raw: '1234',
     });
 
-    userEvent.type(inputField, '567.89');
+    await userEvent.type(inputField, '567.89');
     expect(inputField).toHaveValue('1,234,567.89');
     expect(onChange).toHaveBeenCalledTimes(10);
     expect(onChange).toHaveBeenLastCalledWith({
@@ -70,7 +71,7 @@ describe('<Amount />', () => {
       raw: '1234567.89',
     });
 
-    userEvent.type(inputField, '5');
+    await userEvent.type(inputField, '5');
     expect(inputField).toHaveValue('1,234,567.89');
     expect(onChange).toHaveBeenCalledTimes(11);
     expect(onChange).toHaveBeenLastCalledWith({
@@ -91,7 +92,7 @@ describe('<Amount />', () => {
 
     const inputField = screen.getByTestId('reactAmount');
 
-    userEvent.type(inputField, '12345678.90');
+    await userEvent.type(inputField, '12345678.90');
     expect(inputField).toHaveValue('1 23 45 678,90');
     expect(onChange).toHaveBeenCalledTimes(11);
     expect(onChange).toHaveBeenLastCalledWith({
@@ -109,7 +110,7 @@ describe('<Amount />', () => {
 
     const inputField = screen.getByTestId<HTMLInputElement>('reactAmount');
 
-    userEvent.type(inputField, '12345678.90');
+    await userEvent.type(inputField, '12345678.90');
     expect(inputField).toHaveValue('12,345,678.90');
     expect(onChange).toHaveBeenCalledTimes(11);
     expect(onChange).toHaveBeenLastCalledWith({
@@ -118,7 +119,13 @@ describe('<Amount />', () => {
       raw: '12345678.90',
     });
 
-    userEvent.type(inputField, '{arrowleft}'.repeat(4) + '9'.repeat(10));
+    for (let i = 0; i < 10; i++) {
+      await userEvent.type(inputField, '9', {
+        initialSelectionStart: 9,
+        initialSelectionEnd: 9,
+      });
+    }
+
     expect(inputField).toHaveValue('123,456,799,999,999,998.90');
     expect(onChange).toHaveBeenCalledTimes(21);
     expect(onChange).toHaveBeenLastCalledWith({
@@ -141,12 +148,12 @@ describe('<Amount />', () => {
     const inputField = screen.getByTestId('reactAmount');
 
     // User hist backspace
-    userEvent.type(inputField, '{backspace}');
+    await userEvent.type(inputField, '{backspace}');
     expect(inputField).toHaveValue('');
     expect(onChange).toHaveBeenCalledTimes(0);
 
     // User hist delete
-    userEvent.type(inputField, '{delete}');
+    await userEvent.type(inputField, '{delete}');
     expect(inputField).toHaveValue('');
     expect(onChange).toHaveBeenCalledTimes(0);
   });
@@ -162,7 +169,7 @@ describe('<Amount />', () => {
 
     const inputField = screen.getByTestId('reactAmount');
 
-    userEvent.type(inputField, '12345678.90');
+    await userEvent.type(inputField, '12345678.90');
     expect(inputField).toHaveValue('1234 5678,90');
     expect(onChange).toHaveBeenCalledTimes(11);
     expect(onChange).toHaveBeenLastCalledWith({
@@ -171,7 +178,7 @@ describe('<Amount />', () => {
       raw: '12345678.90',
     });
 
-    userEvent.type(inputField, '{arrowleft}{arrowleft}{backspace}');
+    await userEvent.type(inputField, '{ArrowLeft}{ArrowLeft}{Backspace}');
     expect(inputField).toHaveValue('12 3456 7890');
     expect(onChange).toHaveBeenCalledTimes(12);
     expect(onChange).toHaveBeenLastCalledWith({
@@ -192,7 +199,7 @@ describe('<Amount />', () => {
 
     const inputField = screen.getByTestId('reactAmount');
 
-    userEvent.type(inputField, '12345678.90');
+    await userEvent.type(inputField, '12345678.90');
     expect(inputField).toHaveValue('1234 5678,90');
     expect(onChange).toHaveBeenCalledTimes(11);
     expect(onChange).toHaveBeenLastCalledWith({
@@ -201,7 +208,7 @@ describe('<Amount />', () => {
       raw: '12345678.90',
     });
 
-    userEvent.type(inputField, '{arrowleft}'.repeat(3) + '{delete}');
+    await userEvent.type(inputField, '{ArrowLeft}'.repeat(3) + '{Delete}');
     expect(inputField).toHaveValue('12 3456 7890');
     expect(onChange).toHaveBeenCalledTimes(12);
     expect(onChange).toHaveBeenLastCalledWith({
@@ -219,7 +226,7 @@ describe('<Amount />', () => {
 
     const inputField = screen.getByTestId('reactAmount');
 
-    userEvent.type(inputField, '12345678.90');
+    await userEvent.type(inputField, '12345678.90');
     expect(inputField).toHaveValue('12,345,678.90');
     expect(onChange).toHaveBeenCalledTimes(11);
     expect(onChange).toHaveBeenLastCalledWith({
@@ -228,7 +235,7 @@ describe('<Amount />', () => {
       raw: '12345678.90',
     });
 
-    userEvent.type(inputField, '{arrowleft}'.repeat(6) + '{backspace}');
+    await userEvent.type(inputField, '{ArrowLeft}'.repeat(6) + '{Backspace}');
     expect(inputField).toHaveValue('1,234,678.90');
     expect(onChange).toHaveBeenCalledTimes(12);
     expect(onChange).toHaveBeenLastCalledWith({
@@ -246,7 +253,7 @@ describe('<Amount />', () => {
 
     const inputField = screen.getByTestId('reactAmount');
 
-    userEvent.type(inputField, '12345678.90');
+    await userEvent.type(inputField, '12345678.90');
     expect(inputField).toHaveValue('12,345,678.90');
     expect(onChange).toHaveBeenCalledTimes(11);
     expect(onChange).toHaveBeenLastCalledWith({
@@ -255,7 +262,7 @@ describe('<Amount />', () => {
       raw: '12345678.90',
     });
 
-    userEvent.type(inputField, '{arrowleft}'.repeat(7) + '{delete}');
+    await userEvent.type(inputField, '{ArrowLeft}'.repeat(7) + '{Delete}');
     expect(inputField).toHaveValue('1,234,578.90');
     expect(onChange).toHaveBeenCalledTimes(12);
     expect(onChange).toHaveBeenLastCalledWith({
@@ -273,7 +280,7 @@ describe('<Amount />', () => {
 
     const inputField = screen.getByTestId('reactAmount');
 
-    userEvent.type(inputField, '12345678.90');
+    await userEvent.type(inputField, '12345678.90');
     expect(inputField).toHaveValue('12,345,678.90');
     expect(onChange).toHaveBeenCalledTimes(11);
     expect(onChange).toHaveBeenLastCalledWith({
@@ -282,10 +289,12 @@ describe('<Amount />', () => {
       raw: '12345678.90',
     });
 
-    userEvent.type(
-      inputField,
-      '{arrowleft}'.repeat(3) + '{backspace}'.repeat(3),
-    );
+    for (let i = 0; i < 3; ++i) {
+      await userEvent.type(inputField, '{backspace}', {
+        initialSelectionStart: 9 - i,
+      });
+    }
+
     expect(inputField).toHaveValue('12,345.90');
     expect(onChange).toHaveBeenCalledTimes(14);
     expect(onChange).toHaveBeenLastCalledWith({
@@ -304,7 +313,7 @@ describe('<Amount />', () => {
 
     const inputField = screen.getByTestId('reactAmount');
 
-    userEvent.type(inputField, '12345678.90');
+    await userEvent.type(inputField, '12345678.90');
     expect(inputField).toHaveValue('12345678.90');
     expect(onChange).toHaveBeenCalledTimes(11);
     expect(onChange).toHaveBeenLastCalledWith({
@@ -313,9 +322,9 @@ describe('<Amount />', () => {
       raw: '12345678.90',
     });
 
-    userEvent.type(
+    await userEvent.type(
       inputField,
-      '{arrowleft}'.repeat(6) + '{backspace}'.repeat(3),
+      '{ArrowLeft}'.repeat(6) + '{Backspace}'.repeat(3),
     );
     expect(inputField).toHaveValue('12678.90');
     expect(onChange).toHaveBeenCalledTimes(14);
@@ -335,7 +344,7 @@ describe('<Amount />', () => {
 
     const inputField = screen.getByTestId('reactAmount');
 
-    userEvent.type(inputField, '12345678.90');
+    await userEvent.type(inputField, '12345678.90');
     expect(inputField).toHaveValue('12345678.90');
     expect(onChange).toHaveBeenCalledTimes(11);
     expect(onChange).toHaveBeenLastCalledWith({
@@ -344,7 +353,10 @@ describe('<Amount />', () => {
       raw: '12345678.90',
     });
 
-    userEvent.type(inputField, '{arrowleft}'.repeat(10) + '{delete}'.repeat(3));
+    await userEvent.type(
+      inputField,
+      '{ArrowLeft}'.repeat(10) + '{Delete}'.repeat(3),
+    );
     expect(inputField).toHaveValue('15678.90');
     expect(onChange).toHaveBeenCalledTimes(14);
     expect(onChange).toHaveBeenLastCalledWith({
@@ -362,7 +374,7 @@ describe('<Amount />', () => {
 
     const inputField = screen.getByTestId<HTMLInputElement>('reactAmount');
 
-    userEvent.type(inputField, '12345678.90');
+    await userEvent.type(inputField, '12345678.90');
     expect(inputField).toHaveValue('12,345,678.90');
     expect(onChange).toHaveBeenCalledTimes(11);
     expect(onChange).toHaveBeenLastCalledWith({
@@ -371,8 +383,10 @@ describe('<Amount />', () => {
       raw: '12345678.90',
     });
 
-    inputField.setSelectionRange(8, 13);
-    userEvent.type(inputField, '{delete}');
+    await userEvent.type(inputField, '{Delete}', {
+      initialSelectionStart: 8,
+      initialSelectionEnd: 13,
+    });
     expect(inputField).toHaveValue('123,456');
     expect(onChange).toHaveBeenCalledTimes(12);
     expect(onChange).toHaveBeenLastCalledWith({
@@ -388,7 +402,7 @@ describe('<Amount />', () => {
 
     const inputField = screen.getByTestId('reactAmount');
 
-    userEvent.type(inputField, '1234');
+    await userEvent.type(inputField, '1234');
     expect(inputField).toHaveValue('1,234');
     expect(onChange).toHaveBeenCalledTimes(0);
   });
@@ -406,19 +420,19 @@ describe('<Amount />', () => {
 
     const inputField = screen.getByTestId('reactAmount');
 
-    userEvent.type(inputField, '1');
+    await userEvent.type(inputField, '1');
     expect(inputField).toHaveValue('1');
     expect(onChange).toHaveBeenCalledTimes(1);
 
-    userEvent.type(inputField, '2');
+    await userEvent.type(inputField, '2');
     expect(inputField).toHaveValue('12');
     expect(onChange).toHaveBeenCalledTimes(2);
 
-    userEvent.type(inputField, '3');
+    await userEvent.type(inputField, '3');
     expect(inputField).toHaveValue('123');
     expect(onChange).toHaveBeenCalledTimes(3);
 
-    userEvent.type(inputField, '4');
+    await userEvent.type(inputField, '4');
     expect(inputField).toHaveValue('1,234');
     expect(onChange).toHaveBeenCalledTimes(4);
 
@@ -440,7 +454,7 @@ describe('<Amount />', () => {
 
     const inputField = screen.getByTestId('reactAmount');
 
-    userEvent.type(inputField, '1234');
+    await userEvent.type(inputField, '1234');
     expect(inputField).toHaveValue('1,234');
     expect(onChange).toHaveBeenCalledTimes(0);
   });
@@ -460,13 +474,13 @@ describe('<Amount />', () => {
 
     const inputField = screen.getByTestId('reactAmount');
 
-    userEvent.click(inputField);
+    await userEvent.click(inputField);
     expect(container.firstChild).toHaveClass('amount-input-wrapper');
     expect(container.firstChild).toHaveClass('reactAmountClass');
     expect(container.firstChild).toHaveClass('focus');
     expect(container.firstChild).not.toHaveClass('textonly');
 
-    userEvent.click(container);
+    await userEvent.click(container);
     expect(container.firstChild).toHaveClass('amount-input-wrapper');
     expect(container.firstChild).toHaveClass('reactAmountClass');
     expect(container.firstChild).not.toHaveClass('focus');
@@ -483,12 +497,12 @@ describe('<Amount />', () => {
 
     expect(container.firstElementChild).toBeDefined();
 
-    userEvent.click(container.firstElementChild!);
+    await userEvent.click(container.firstElementChild!);
     expect(container.firstChild).toHaveClass('amount-text-wrapper');
     expect(container.firstChild).toHaveClass('textonly');
     expect(container.firstChild).not.toHaveClass('focus');
 
-    userEvent.click(container);
+    await userEvent.click(container);
     expect(container.firstChild).toHaveClass('amount-text-wrapper');
     expect(container.firstChild).toHaveClass('textonly');
     expect(container.firstChild).not.toHaveClass('focus');
