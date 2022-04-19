@@ -225,7 +225,7 @@ const Amount = (props: AmountProps): React.ReactElement => {
         type="text"
         id={name}
         autoComplete="off"
-        inputMode="numeric"
+        inputMode="decimal"
         value={formattedValue}
         name={name}
         data-testid={dataTestId}
